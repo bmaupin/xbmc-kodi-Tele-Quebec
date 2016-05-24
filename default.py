@@ -353,6 +353,9 @@ def addLink(name,url,iconimage,url_info,plot,duree,fanart):
             "&Info="+urllib.quote_plus(url_info)
         liz=xbmcgui.ListItem(name, iconImage=addon_images_base_path+"default-video.png", thumbnailImage=iconimage)
         liz.setInfo( type="Video", infoLabels={ "Title": urllib.quote_plus(name),"Plot":plot,"Duration":duree } )
+        if fanart==addon_fanart:
+            fanart=iconimage 
+        log("fanart: "+fanart)
         if addon.getSetting('FanartEnabled') == 'true':
             if addon.getSetting('FanartEmissionsEnabled') == 'true':
                 if fanart != '':
