@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+    <!-- GENERALITE -->
+    <category label="32000">
+        <setting label="32100" type="lsep" />
+        <setting label="32101" type="bool" id="FanartEnabled" default="true"/>
+        <setting label="32102" type="bool" id="FanartEmissionsEnabled" default="true"/>
+        <setting label="32103" type="lsep" />
+        <setting label="32104" type="bool" id="DebugMode" default="false"/>
+    </category> 
+
+</settings>

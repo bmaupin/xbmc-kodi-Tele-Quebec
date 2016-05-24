@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+    <!-- GENERALITE -->
+    <string id="32000">Configuration</string>
+    <string id="32100">Apparence</string>
+    <string id="32101">Enable the addon fanart</string>
+    <string id="32102">--- If available, use the tv-show image as fanart</string>
+
+    <!-- OTHERS -->
+    <string id="32103">Miscellaneous</string>
+    <string id="32104">Debug mode - Consult the kodi log file</string>
+
+</strings>
