@@ -130,7 +130,7 @@ def creerListeFiltree(categorieVoulue,url):
                     # <!-- Sly
                     if lien != '/a-z/289/le-skwat': 
                         elementsInformations = trouverInfosEmission(TELEQUEBEC_BASE_URL+lien) 
-                        addEmission(titre,TELEQUEBEC_BASE_URL+lien,elementsInformations[0],elementsInformations[1]) 
+                        addEmission(titre,TELEQUEBEC_BASE_URL+lien,elementsInformations[0],elementsInformations[1],'') 
                     # -->
 
 def creerDossiers(url):
@@ -144,10 +144,13 @@ def creerDossiers(url):
                         urlDossier = rechercherUnElement('href="(.+?)">',sub2)
                         nomDossier = rechercherUnElement('<a(?:.+?)>(.+?)</a>',sub2)
                         icon = rechercherUnElement('src="(.+?)"',item)
+                        fanart = icon
                         #infos = trouverInfosEpisode(TELEQUEBEC_BASE_URL+urlEpisode)
-                        addEmission(nomDossier,TELEQUEBEC_BASE_URL+urlDossier,icon,'')
+                        addEmission(nomDossier,TELEQUEBEC_BASE_URL+urlDossier,icon,'',fanart)
 
 def creerListeVideos(url,fanart):
+       if fanart == '':
+            fanart=addon_fanart
        link = getURLtxt(url)
        nbSaisons=creerListeSaisons(link,fanart)
        nbSaisons=creerListeSupplement(link,nbSaisons)
@@ -185,7 +188,7 @@ def creerListeSupplement(link,nbSaisons):
 def creerListeEpisodes(url,saison,nomComplet,fanart):
         link = getURLtxt(url)
         containerSaison = re.split('<div class="listItem floatContainer">',link) 
-        log('LEN LEN: '+str(len(containerSaison)))
+        log('LEN(containerSaison): '+str(len(containerSaison)))
         if len(containerSaison)<saison:
                 debugPrint('Probleme de scraper de saisons')
         else:
@@ -308,19 +311,21 @@ def addDir(name,url,mode,iconimage,categorie,nomComplet):
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
         return ok
 
-def addEmission(name,url,iconimage,plot):
+def addEmission(name,url,iconimage,plot,fanart):
         prochainMode = 2
+        if fanart=='':
+            fanart=iconimage
         u=sys.argv[0]+"?url="+urllib.quote_plus(url)+\
             "&mode="+str(prochainMode)+\
             "&name="+urllib.quote_plus(name)+\
-            "&fanart="+urllib.quote_plus(str(iconimage))+\
+            "&fanart="+urllib.quote_plus(str(fanart))+\
             "&fullName="+urllib.quote_plus(str(fullName))
         ok=True
         liz=xbmcgui.ListItem(name, iconImage=addon_images_base_path+'default-folder.png', thumbnailImage=iconimage)
         liz.setInfo( type="Video", infoLabels={ "Title": urllib.unquote(name),"Plot":plot } )
         if addon.getSetting('FanartEnabled') == 'true':
             if addon.getSetting('FanartEmissionsEnabled') == 'true':
-                liz.setProperty('fanart_image', iconimage)
+                liz.setProperty('fanart_image', fanart)
             else:
                 liz.setProperty('fanart_image', addon_fanart)
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
@@ -355,7 +360,7 @@ def addLink(name,url,iconimage,url_info,plot,duree,fanart):
         liz.setInfo( type="Video", infoLabels={ "Title": urllib.quote_plus(name),"Plot":plot,"Duration":duree } )
         if fanart==addon_fanart:
             fanart=iconimage 
-        log("fanart: "+fanart)
+        log("addLink() fanart: "+fanart)
         if addon.getSetting('FanartEnabled') == 'true':
             if addon.getSetting('FanartEmissionsEnabled') == 'true':
                 if fanart != '':
@@ -382,6 +387,7 @@ def log(msg):
 
 # ---
 
+log('--- init -----------------')
 params=get_params()
 url=None
 name=None
@@ -391,37 +397,46 @@ categorie=None
 season=0
 fullName=0
 
-if addon.getSetting('DebugMode') == 'true':
-    log('Params: ')
-    pprint.pprint(params)
-
 try:
         url=urllib.unquote_plus(params["url"])
+        log("params['url']:"+url)
 except:
         pass
 try:
         name=urllib.unquote_plus(params["name"])
+        log("params['name']:"+name)
 except:
         pass
 try:
         mode=int(params["mode"])
+        log("params['mode']:"+str(mode))
 except:
         pass
 try:
         categorie=int(params["categorie"])
+        log("params['categorie']:"+str(categorie))
 except:
         pass
 try:
         url_info=int(params["Info"])
+        log("params['Info']:"+str(url_info))
 except:
         pass
 try:
         season=int(params["season"])
+        log("params['season']:"+str(season))
 except:
         pass
 try:
         fullName=int(params["fullName"])
+        log("params['fullName']:"+str(fullName))
 except:
+        pass
+try:
+        fanart=urllib.unquote_plus(params["fanart"])
+        log("params['fanart']:"+fanart)
+except:
+        fanart=''
         pass
 
 if mode==None or url==None or len(url)<1:
@@ -431,11 +446,9 @@ elif mode==1:
         creerListeFiltree(categorie,url)
 
 elif mode==2:
-        fanart=addon_fanart
         creerListeVideos(url,fanart)
 
 elif mode==3:
-        fanart=urllib.unquote_plus(params["fanart"])
         creerListeEpisodes(url,season,fullName,fanart)
 
 elif mode==4:
