@@ -1,3 +1,6 @@
+[B]2.0.0 | SlySen | 2016-05-25[/B] 
+* Addon version incrementation from 0.2.8 to 2.0.0 
+
 [B]0.2.8 | SlySen | 2016-05-24[/B] 
 * Fix listEpisodes by seasons
 * Miscellaneous minor coding checkstyle fixes 
