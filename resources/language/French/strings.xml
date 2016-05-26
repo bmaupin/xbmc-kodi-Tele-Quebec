@@ -10,6 +10,8 @@
     <string id="32105">Cache</string>
     <string id="32106">Durée de vie des informations gardées en cache</string>
     <string id="32107">Nettoyer le cache...</string>
+    <string id="32108">Nettoyage du cache...</string>
+    <string id="32109">Succès!</string>
     <string id="32200">30 Minutes</string>
     <string id="32201">1 Heure</string>
     <string id="32202">2 Heures</string>

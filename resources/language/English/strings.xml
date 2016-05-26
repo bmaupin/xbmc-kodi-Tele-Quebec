@@ -10,6 +10,8 @@
     <string id="32105">Cache</string>
     <string id="32106">Time to live of cached content</string>
     <string id="32107">Clear cache...</string>
+    <string id="32108">Deleting cache...</string>
+    <string id="32109">Done!</string>
     <string id="32200">30 Minutes</string>
     <string id="32201">1 Hour</string>
     <string id="32202">2 Hours</string>
