@@ -6,6 +6,37 @@
     <string id="32101">Activer le fanart de l'addiciel</string>
     <string id="32102">--- Si disponible, utiliser l'image de l'émission en fanart</string>
 
+    <!-- CACHE -->
+    <string id="32105">Cache</string>
+    <string id="32106">Durée de vie des informations gardées en cache</string>
+    <string id="32107">Nettoyer le cache...</string>
+    <string id="32200">30 Minutes</string>
+    <string id="32201">1 Heure</string>
+    <string id="32202">2 Heures</string>
+    <string id="32203">3 Heures</string>
+    <string id="32204">4 Heures</string>
+    <string id="32205">5 Heures</string>
+    <string id="32206">6 Heures</string>
+    <string id="32207">7 Heures</string>
+    <string id="32208">8 Heures</string>
+    <string id="32209">9 Heures</string>
+    <string id="32210">10 Heures</string>
+    <string id="32211">11 Heures</string>
+    <string id="32212">12 Heures</string>
+    <string id="32213">13 Heures</string>
+    <string id="32214">14 Heures</string>
+    <string id="32215">15 Heures</string>
+    <string id="32216">16 Heures</string>
+    <string id="32217">17 Heures</string>
+    <string id="32218">18 Heures</string>
+    <string id="32219">19 Heures</string>
+    <string id="32220">20 Heures</string>
+    <string id="32221">21 Heures</string>
+    <string id="32222">22 Heures</string>
+    <string id="32223">23 Heures</string>
+    <string id="32224">24 Heures</string>
+    <string id="32225">Jamais</string>
+
     <!-- OTHERS -->
     <string id="32103">Divers</string>
     <string id="32104">Mode débogue - Consultez le fichier des logs de Kodi</string>

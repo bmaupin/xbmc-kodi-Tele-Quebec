@@ -6,6 +6,37 @@
     <string id="32101">Enable the addon fanart</string>
     <string id="32102">--- If available, use the tv-show image as fanart</string>
 
+    <!-- CACHE -->
+    <string id="32105">Cache</string>
+    <string id="32106">Time to live of cached content</string>
+    <string id="32107">Clear cache...</string>
+    <string id="32200">30 Minutes</string>
+    <string id="32201">1 Hour</string>
+    <string id="32202">2 Hours</string>
+    <string id="32203">3 Hours</string>
+    <string id="32204">4 Hours</string>
+    <string id="32205">5 Hours</string>
+    <string id="32206">6 Hours</string>
+    <string id="32207">7 Hours</string>
+    <string id="32208">8 Hours</string>
+    <string id="32209">9 Hours</string>
+    <string id="32210">10 Hours</string>
+    <string id="32211">11 Hours</string>
+    <string id="32212">12 Hours</string>
+    <string id="32213">13 Hours</string>
+    <string id="32214">14 Hours</string>
+    <string id="32215">15 Hours</string>
+    <string id="32216">16 Hours</string>
+    <string id="32217">17 Hours</string>
+    <string id="32218">18 Hours</string>
+    <string id="32219">19 Hours</string>
+    <string id="32220">20 Hours</string>
+    <string id="32221">21 Hours</string>
+    <string id="32222">22 Hours</string>
+    <string id="32223">23 Hours</string>
+    <string id="32224">24 Hours</string>
+    <string id="32225">None</string>
+
     <!-- OTHERS -->
     <string id="32103">Miscellaneous</string>
     <string id="32104">Debug mode - Consult the kodi log file</string>

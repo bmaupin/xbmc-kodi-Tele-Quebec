@@ -1,5 +1,5 @@
 # -*- coding: cp1252 -*-
-import os,urllib,urllib2,re,xbmcplugin,xbmcaddon,xbmcgui,xbmc,simplejson
+import os,time, urllib,urllib2,re,xbmcplugin,xbmcaddon,xbmcgui,xbmc,simplejson
 import pprint
 if sys.version >= "2.5":
     from hashlib import md5 as _hash
@@ -13,6 +13,7 @@ else:
 
 addon = xbmcaddon.Addon()
 addon_cache_basedir = os.path.join(xbmc.translatePath(addon.getAddonInfo('path')),".cache")
+addon_cache_ttl = float(addon.getSetting('CacheTTL').replace("0",".5").replace("25","0"))
 addon_icon = addon.getAddonInfo('icon')
 addon_name = addon.getAddonInfo('name')
 addon_images_base_path = addon.getAddonInfo('path')+'/resources/media/images/'
@@ -23,6 +24,12 @@ TELEQUEBEC_BASE_URL = 'http://zonevideo.telequebec.tv'
 if not os.path.exists(addon_cache_basedir):
     os.makedirs(addon_cache_basedir)
 
+def is_cached_content_expired(lastUpdate):
+    #log('LASTUPDATE: '+str(lastUpdate))
+    #log('TTL: '+str(addon_cache_ttl))
+    expired = time.time() >= (lastUpdate + (addon_cache_ttl * 60**2))
+    return expired
+
 def get_cached_filename(path):
     filename = "%s" % _hash(repr(path)).hexdigest()
     return os.path.join(addon_cache_basedir, filename)
@@ -31,7 +38,7 @@ def get_cached_content(path):
     content=None
     try:
         filename = get_cached_filename(path)
-        if os.path.exists(filename):
+        if os.path.exists(filename) and not is_cached_content_expired(os.path.getmtime(filename)):
             content=open(filename).read()
         else:
             content=getURLtxt(path)
