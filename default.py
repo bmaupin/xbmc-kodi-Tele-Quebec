@@ -1,6 +1,10 @@
 # -*- coding: cp1252 -*-
-import urllib,urllib2,re,xbmcplugin,xbmcaddon,xbmcgui,xbmc,simplejson
+import os,urllib,urllib2,re,xbmcplugin,xbmcaddon,xbmcgui,xbmc,simplejson
 import pprint
+if sys.version >= "2.5":
+    from hashlib import md5 as _hash
+else:
+    from md5 import new as _hash
 
 # version 2.7
 #By SlySen
@@ -8,13 +12,36 @@ import pprint
 #By CB
 
 addon = xbmcaddon.Addon()
+addon_cache_basedir = os.path.join(xbmc.translatePath(addon.getAddonInfo('path')),".cache")
 addon_icon = addon.getAddonInfo('icon')
 addon_name = addon.getAddonInfo('name')
-addon_path = addon.getAddonInfo('path')
 addon_images_base_path = addon.getAddonInfo('path')+'/resources/media/images/'
 addon_fanart = addon.getAddonInfo('path')+'/fanart.jpg'
 
 TELEQUEBEC_BASE_URL = 'http://zonevideo.telequebec.tv'
+
+if not os.path.exists(addon_cache_basedir):
+    os.makedirs(addon_cache_basedir)
+
+def get_cached_filename(path):
+    filename = "%s" % _hash(repr(path)).hexdigest()
+    return os.path.join(addon_cache_basedir, filename)
+
+def get_cached_content(path):
+    content=None
+    try:
+        filename = get_cached_filename(path)
+        if os.path.exists(filename):
+            content=open(filename).read()
+        else:
+            content=getURLtxt(path)
+            try:
+                file(filename,"w").write(content) # cache the requested web content
+            except:
+                print_exc()
+    except:
+        return None
+    return content
 
 #Merci à l'auteur de cette fonction
 def unescape_callback(matches):
@@ -72,9 +99,10 @@ def getURLtxt(url):
         return link
 
 def getBlock(url):
-        link = getURLtxt(url)
+        link = get_cached_content(url)
         main = rechercherUnElement('content azsContainer index(.+?)<footer>',link)
         return main
+
 def getCategories(url):
         main = getBlock(url)
         match=re.compile('<option value="(.+?)">(.+?)</option>',re.DOTALL).findall(main)
@@ -94,7 +122,7 @@ def comparerCategorie(categorieVoulue, listeCategorie):
         return 0
 
 def trouverInfosEmission(url):
-       link = getURLtxt(url)
+       link = get_cached_content(url)
        main = rechercherUnElement('<article class="emission">(.+?)</article>',link)
        sub= rechercherUnElement('class="emissionHeader"(.+?)</div>',main)
        icon = rechercherUnElement('img src="(.+?)"',sub)
@@ -134,7 +162,7 @@ def creerListeFiltree(categorieVoulue,url):
                     # -->
 
 def creerDossiers(url):
-        link = getURLtxt(url)
+        link = get_cached_content(url)
         container = re.split('<div class="listItem floatContainer">',link)
         liste = re.split('<div class="item"',container[1])
         for item in liste:
@@ -151,10 +179,9 @@ def creerDossiers(url):
 def creerListeVideos(url,fanart):
        if fanart == '':
             fanart=addon_fanart
-       link = getURLtxt(url)
+       link = get_cached_content(url)
        nbSaisons=creerListeSaisons(link,fanart)
        nbSaisons=creerListeSupplement(link,nbSaisons)
-
 
 def creerListeSaisons(link,fanart):
        nbSaisons = 0
@@ -186,9 +213,8 @@ def creerListeSupplement(link,nbSaisons):
         return nbSaisons
 
 def creerListeEpisodes(url,saison,nomComplet,fanart):
-        link = getURLtxt(url)
+        link = get_cached_content(url)
         containerSaison = re.split('<div class="listItem floatContainer">',link) 
-        log('LEN(containerSaison): '+str(len(containerSaison)))
         if len(containerSaison)<saison:
                 debugPrint('Probleme de scraper de saisons')
         else:
@@ -216,14 +242,14 @@ def creerListeEpisodes(url,saison,nomComplet,fanart):
                                        addLink(nomEpisode,TELEQUEBEC_BASE_URL+urlEpisode,icon,'','',duree,fanart)
 
 def trouverInfosEpisode(url):
-       link = getURLtxt(url)
+       link = get_cached_content(url)
        icon = rechercherUnElement('<meta itemprop="image" content="(.+?)">',link)
        description = rechercherUnElement('<meta name="description" content="(.+?)>',link)
 
        return [icon,description]
 
 def JOUERVIDEO(url,name,url_info):
-        link = getURLtxt(url)
+        link = get_cached_content(url)
 
         #Obtenir mediaUID pure de l'émission
         mediaUID = rechercherUnElement('mediaUID: \'Limelight_(.+?)\'',link)
@@ -231,13 +257,13 @@ def JOUERVIDEO(url,name,url_info):
         if mediaUID == "":
             mediaID = rechercherUnElement('mediaId: (.+?),',link)
             if mediaID != "":
-                mediaMetadata = getURLtxt('http://medias.api.telequebec.tv/api/v1/media/%s' % mediaID)
+                mediaMetadata = get_cached_content('http://medias.api.telequebec.tv/api/v1/media/%s' % mediaID)
                 mediaMetadataJSON = simplejson.loads(mediaMetadata)
                 mediaUID = mediaMetadataJSON['media']['streamInfo']['sourceId'] 
         # -->
 
         #Obtenir JSON avec liens RTMP du playlistService
-        link = getURLtxt('http://production.ps.delve.cust.lldns.net/r/PlaylistService/media/%s/getPlaylistByMediaId' % mediaUID)
+        link = get_cached_content('http://production.ps.delve.cust.lldns.net/r/PlaylistService/media/%s/getPlaylistByMediaId' % mediaUID)
         videoJSON = simplejson.loads(link)
 
         #Preparer list de videos à jouer
@@ -341,7 +367,7 @@ def addDirSaison(name,url,iconimage,saison):
             "&fullName="+urllib.quote_plus(str(fullName))
         ok=True
         liz=xbmcgui.ListItem(name, iconImage=addon_images_base_path+'default-folder.png', thumbnailImage=iconimage)
-        liz.setInfo( type="Video", infoLabels={ "Title": urllib.unquote(name),"Plot":name } )
+        liz.setInfo( type="Video", infoLabels={ "Title": urllib.unquote(name),"Plot":name} )
         if addon.getSetting('FanartEnabled') == 'true':
             if addon.getSetting('FanartEmissionsEnabled') == 'true':
                 liz.setProperty('fanart_image', iconimage)
@@ -360,7 +386,6 @@ def addLink(name,url,iconimage,url_info,plot,duree,fanart):
         liz.setInfo( type="Video", infoLabels={ "Title": urllib.quote_plus(name),"Plot":plot,"Duration":duree } )
         if fanart==addon_fanart:
             fanart=iconimage 
-        log("addLink() fanart: "+fanart)
         if addon.getSetting('FanartEnabled') == 'true':
             if addon.getSetting('FanartEmissionsEnabled') == 'true':
                 if fanart != '':
@@ -388,6 +413,7 @@ def log(msg):
 # ---
 
 log('--- init -----------------')
+log("addon_cache_basedir:"+addon_cache_basedir)
 params=get_params()
 url=None
 name=None
