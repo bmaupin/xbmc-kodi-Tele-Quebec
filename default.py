@@ -244,15 +244,33 @@ def creerListeEpisodes(url,saison,nomComplet,fanart):
                                 nomEpisode = rechercherUnElement('<a(?:.+?)>(.+?)</a>',sub2)
                                 icon = rechercherUnElement('src="(.+?)"',item)
                                 dureeBlock = rechercherUnElement('"infoSaison"(.+?)</p>',item)
-                                duree = rechercherUnElement('(..:..)',dureeBlock)
-                                #duree = (str(int(duree[0])*60+int(duree[1])))
+                                duree = rechercherUnElement('(\d+:\d+:\d+)',dureeBlock)
+                                # C'est laid. FIXME
+                                log("d1-:"+duree)
+                                if not duree:
+                                    duree = rechercherUnElement('(\d+:\d+)',dureeBlock)
+                                    log("d2-:"+duree)
+                                    if not duree:
+                                        duree=""
+                                        log("d3-:"+duree)
+                                    else:
+                                        d_entries=re.findall(r'(\d+):(\d+)', duree)
+                                        duree=int(d_entries[0][0])*60+int(d_entries[0][1])
+                                        log("d4-:"+str(duree))
+                                else:
+                                    # hh:mm:ss
+                                    d_entries=re.findall(r'(\d+):(\d+):(\d+)', duree)
+                                    duree=int(d_entries[0][0])*60*60+int(d_entries[0][1])*60+int(d_entries[0][2])
+                                    log("d5-:"+str(duree))
+                                # / C'est laid. FIXME
+
                                 #infos = trouverInfosEpisode(TELEQUEBEC_BASE_URL+urlEpisode)
 
                                 mediaUrl=TELEQUEBEC_BASE_URL+urlEpisode
                                 if (nomComplet==1):
-                                       addLink(nomEmission+' : '+nomEpisode,mediaUrl,icon,'','',duree,fanart)
+                                       addLink(nomEmission+' : '+nomEpisode,mediaUrl,icon,'',nomEmission,duree,fanart)
                                 else:
-                                       addLink(nomEpisode,mediaUrl,icon,'','',duree,fanart)
+                                       addLink(nomEpisode,mediaUrl,icon,'',nomEmission,duree,fanart)
 
 def trouverInfosEpisode(url):
        link = get_cached_content(url)
@@ -420,15 +438,20 @@ def addLink(name,url,iconimage,url_info,plot,duree,fanart):
             else:
                 liz.setProperty('fanart_image', addon_fanart)
 
-        setSortingMethods()
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=False)
         return ok
 
-def setSortingMethods():
+def setContent(content):
+        xbmcplugin.setContent(int(sys.argv[1]), content)
+        return
+
+def setSortingMethods(mode):
         # c.f.: https://github.com/notspiff/kodi-cmake/blob/master/xbmc/SortFileItem.h
-        if addon.getSetting('SortMethodTvShow') == '1':
-            xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_TITLE)
-            xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_TITLE_IGNORE_THE)
+        log('MODE:'+str(mode))
+        if mode != None and mode != 1:
+            if addon.getSetting('SortMethodTvShow') == '1':
+                xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_TITLE)
+                xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_TITLE_IGNORE_THE)
         return
 
 def debugPrint(texte):
@@ -500,20 +523,27 @@ except:
 
 if mode==None or url==None or len(url)<1:
         creerMenuCategories()
+        setContent('episodes')
 
 elif mode==1:
         creerListeFiltree(categorie,url)
+        setContent('episodes')
 
 elif mode==2:
         creerListeVideos(url,fanart)
+        setContent('episodes')
 
 elif mode==3:
         creerListeEpisodes(url,season,fullName,fanart)
+        setContent('episodes')
 
 elif mode==4:
         JOUERVIDEO(url,name,url_info)
 
 elif mode==6:
         creerDossiers(url)
+        #setContent('tvshows')
+        setContent('episodes')
 
+setSortingMethods(mode)
 xbmcplugin.endOfDirectory(int(sys.argv[1]))
