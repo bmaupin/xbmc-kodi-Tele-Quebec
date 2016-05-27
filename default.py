@@ -1,4 +1,7 @@
-# -*- coding: cp1252 -*-
+# -*- coding: utf-8 -*-
+
+
+##### -*- coding: cp1252 -*-
 import os,time, urllib,urllib2,re,xbmcplugin,xbmcaddon,xbmcgui,xbmc,simplejson
 import pprint
 if sys.version >= "2.5":
@@ -221,6 +224,7 @@ def creerListeSupplement(link,nbSaisons):
 
 def creerListeEpisodes(url,saison,nomComplet,fanart):
         link = get_cached_content(url)
+
         containerSaison = re.split('<div class="listItem floatContainer">',link) 
         if len(containerSaison)<saison:
                 debugPrint('Probleme de scraper de saisons')
@@ -243,10 +247,12 @@ def creerListeEpisodes(url,saison,nomComplet,fanart):
                                 duree = rechercherUnElement('(..:..)',dureeBlock)
                                 #duree = (str(int(duree[0])*60+int(duree[1])))
                                 #infos = trouverInfosEpisode(TELEQUEBEC_BASE_URL+urlEpisode)
+
+                                mediaUrl=TELEQUEBEC_BASE_URL+urlEpisode
                                 if (nomComplet==1):
-                                       addLink(nomEmission+' : '+nomEpisode,TELEQUEBEC_BASE_URL+urlEpisode,icon,'','',duree,fanart)
+                                       addLink(nomEmission+' : '+nomEpisode,mediaUrl,icon,'','',duree,fanart)
                                 else:
-                                       addLink(nomEpisode,TELEQUEBEC_BASE_URL+urlEpisode,icon,'','',duree,fanart)
+                                       addLink(nomEpisode,mediaUrl,icon,'','',duree,fanart)
 
 def trouverInfosEpisode(url):
        link = get_cached_content(url)
@@ -389,8 +395,20 @@ def addLink(name,url,iconimage,url_info,plot,duree,fanart):
             "&mode=4"+\
             "&name="+urllib.quote_plus(name)+\
             "&Info="+urllib.quote_plus(url_info)
+
+#        mediaData = get_cached_content(url_info)
+#        mediaUID = rechercherUnElement('mediaUID: \'Limelight_(.+?)\'',mediaData)
+#        if mediaUID == "":
+#            mediaID = rechercherUnElement('mediaId: (.+?),',link)
+#            if mediaID != "":
+#                mediaMetadata = get_cached_content('http://medias.api.telequebec.tv/api/v1/media/%s' % mediaID)
+#                mediaMetadataJSON = simplejson.loads(mediaMetadata)
+#                mediaUID = mediaMetadataJSON['media']['streamInfo']['sourceId'] 
+#        log('mediaUID: '+ mediaUID)
+
         liz=xbmcgui.ListItem(name, iconImage=addon_images_base_path+"default-video.png", thumbnailImage=iconimage)
-        liz.setInfo( type="Video", infoLabels={ "Title": urllib.quote_plus(name),"Plot":plot,"Duration":duree } )
+        #liz.setInfo( type="Video", infoLabels={"Title": urllib.quote_plus(name),"Plot":plot,"Duration":duree})
+        liz.setInfo( type="Video", infoLabels={"Title": name,"Plot":plot,"Duration":duree})
         if fanart==addon_fanart:
             fanart=iconimage 
         if addon.getSetting('FanartEnabled') == 'true':
@@ -401,8 +419,17 @@ def addLink(name,url,iconimage,url_info,plot,duree,fanart):
                     liz.setProperty('fanart_image', iconimage)
             else:
                 liz.setProperty('fanart_image', addon_fanart)
+
+        setSortingMethods()
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=False)
         return ok
+
+def setSortingMethods():
+        # c.f.: https://github.com/notspiff/kodi-cmake/blob/master/xbmc/SortFileItem.h
+        if addon.getSetting('SortMethodTvShow') == '1':
+            xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_TITLE)
+            xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_TITLE_IGNORE_THE)
+        return
 
 def debugPrint(texte):
         u=sys.argv[0]+"?url="+urllib.quote_plus(TELEQUEBEC_BASE_URL)+\
@@ -420,7 +447,6 @@ def log(msg):
 # ---
 
 log('--- init -----------------')
-log("addon_cache_basedir:"+addon_cache_basedir)
 params=get_params()
 url=None
 name=None

@@ -2,9 +2,10 @@
 <strings>
     <!-- GENERALITE -->
     <string id="32000">Configuration</string>
+    <string id="32110">Advances settings</string>
     <string id="32100">Apparence</string>
     <string id="32101">Enable the addon fanart</string>
-    <string id="32102">--- If available, use the tv-show image as fanart</string>
+    <string id="32102">If available, use the tv-show image as fanart</string>
 
     <!-- CACHE -->
     <string id="32105">Cache</string>
@@ -38,6 +39,11 @@
     <string id="32223">23 Hours</string>
     <string id="32224">24 Hours</string>
     <string id="32225">None</string>
+
+    <!-- SORTING -->
+    <string id="32111">Sorting method</string>
+    <string id="32226">As the web site</string>
+    <string id="32227">Order by title</string>
 
     <!-- OTHERS -->
     <string id="32103">Miscellaneous</string>

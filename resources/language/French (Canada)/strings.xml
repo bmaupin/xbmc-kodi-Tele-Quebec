@@ -3,8 +3,9 @@
     <!-- GENERALITE -->
     <string id="32000">Configuration</string>
     <string id="32100">Apparence</string>
+    <string id="32110">Paramètres Avancés</string>
     <string id="32101">Activer le fanart de l'addiciel</string>
-    <string id="32102">--- Si disponible, utiliser l'image de l'émission en fanart</string>
+    <string id="32102">Si disponible, utiliser l'image de l'émission en fanart</string>
 
     <!-- CACHE -->
     <string id="32105">Cache</string>
@@ -38,6 +39,11 @@
     <string id="32223">23 Heures</string>
     <string id="32224">24 Heures</string>
     <string id="32225">Jamais</string>
+
+    <!-- SORTING -->
+    <string id="32111">Méthode de triage des listes</string>
+    <string id="32226">Comme le site web</string>
+    <string id="32227">Par titre</string>
 
     <!-- OTHERS -->
     <string id="32103">Divers</string>

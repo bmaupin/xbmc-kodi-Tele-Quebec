@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
-    <!-- GENERALITE -->
-    <category label="32000">
-        <setting label="32100" type="lsep" />
+    <!-- APPARENCE -->
+    <category label="32100">
         <setting label="32101" type="bool" id="FanartEnabled" default="true"/>
         <setting label="32102" type="bool" id="FanartEmissionsEnabled" default="true"/>
-        <setting type="lsep" />
-        <setting label="32105" type="lsep" />
+        <setting label="32111" type="enum" id="SortMethodTvShow" lvalues="32226|32227" default="0" />
+    </category> 
+
+    <!-- ADVANCE -->
+    <category label="32110">
+        <!-- <setting label="32105" type="lsep" /> -->
         <setting label="32106" type="enum" id="CacheTTL" lvalues="32200|32201|32202|32203|32204|32205|32206|32207|32208|32209|32210|32211|32212|32213|32214|32215|32216|32217|32218|32219|32220|32221|32222|32223|32224|32225" default="24" />
         <setting label="32107" type="action" action="RunScript($CWD/resources/lib/clearcache.py,full)" default="" />
         <setting type="lsep" />
