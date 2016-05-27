@@ -1,0 +1,3 @@
+- Credits for caching base code goes to:
+  Frost/infologique.net (passion-xbmc.org)
+
