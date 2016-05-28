@@ -184,7 +184,7 @@ def creerDossiers(url):
                         icon = rechercherUnElement('src="(.+?)"',item)
                         fanart = icon
                         #infos = trouverInfosEpisode(TELEQUEBEC_BASE_URL+urlEpisode)
-                        addEmission(nomDossier,TELEQUEBEC_BASE_URL+urlDossier,icon,'',fanart)
+                        addEmission(nomDossier,TELEQUEBEC_BASE_URL+urlDossier,icon,'[B]'+nomDossier+'[/B]',fanart)
 
 def creerListeVideos(url,fanart):
        if fanart == '':

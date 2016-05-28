@@ -1,19 +1,22 @@
+[B]2.0.1 | SlySen | 2016-05-28[/B] 
+- User interface miscellaneous improvements
+
 [B]2.0.0 | SlySen | 2016-05-25[/B] 
-* Add caching support to reduce HTTP external calls 
-* Addon version incrementation from 0.2.8 to 2.0.0 
+- Add caching support to reduce HTTP external calls 
+- Addon version incrementation from 0.2.8 to 2.0.0 
 
 [B]0.2.8 | SlySen | 2016-05-24[/B] 
-* Fix listEpisodes by seasons
-* Miscellaneous minor coding checkstyle fixes 
-* Show also the tv-show icon on seasons lists 
-* Setting to enable a debug mode
-* Setting to turn on/off the fanart on all listview
-* Add addon settings and languages resources
+- Fix listEpisodes by seasons
+- Miscellaneous minor coding checkstyle fixes 
+- Show also the tv-show icon on seasons lists 
+- Setting to enable a debug mode
+- Setting to turn on/off the fanart on all listview
+- Add addon settings and languages resources
 
 [B]0.2.7 | SlySen | 2016-05-19[/B] 
-* Add an addon fanart
-* Use a more up-to-date icon 
-* Dirty fix for "Tous les genres" menu
-* Fix to extract the MediaUID 
-* Addon version incrementation from 0.2.6 to 0.2.7
+- Add an addon fanart
+- Use a more up-to-date icon 
+- Dirty fix for "Tous les genres" menu
+- Fix to extract the MediaUID 
+- Addon version incrementation from 0.2.6 to 0.2.7
 
