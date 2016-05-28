@@ -202,9 +202,11 @@ def creerListeSaisons(link,fanart):
                nomSaison = rechercherUnElement('<a.*?><span class="icon"></span>(.+?)</a>',saisonTxt)
                sub= rechercherUnElement('class="emissionHeader"(.+?)</div>',link)
                icon = rechercherUnElement('img src="(.+?)"',sub) 
+               nomEmission = rechercherUnElement('<h1>(.+?)</h1>',sub) 
+               log(nomEmission)
                if icon == "":
                        icon=addon_images_base_path+'default-folder.png'
-               addDirSaison(nomSaison,url,icon,nbSaisons)
+               addDirSaison(nomSaison,url,icon,nbSaisons,nomEmission)
        if nbSaisons==0:
                creerListeEpisodes(url,1,fullName,fanart)
        return nbSaisons
@@ -217,9 +219,10 @@ def creerListeSupplement(link,nbSaisons):
                 titre = rechercherUnElement('<h2.*?<span>(.+?)</span>',link)
                 sub= rechercherUnElement('class="emissionHeader"(.+?)</div>',link)
                 icon = rechercherUnElement('img src="(.+?)"',sub) 
+                nomEmission = rechercherUnElement('<h1>(.+?)</h1>',sub) 
                 if icon == "":
                         icon=addon_images_base_path+'default-folder.png'
-                addDirSaison(titre,url,icon,nbSaisons)
+                addDirSaison(titre,url,icon,nbSaisons,nomEmission)
         return nbSaisons
 
 def creerListeEpisodes(url,saison,nomComplet,fanart):
@@ -235,6 +238,7 @@ def creerListeEpisodes(url,saison,nomComplet,fanart):
                         containerSaisonStr = ''.join(containerSaison[saison])
 
                  liste = re.split('<div class="item',containerSaisonStr)
+                 medialUrlList=[]
                  for item in liste:
                         sub2 = re.compile('<div class="info">(.+?)</div>',re.DOTALL).findall(item)
                         if len(sub2)>0:
@@ -268,9 +272,9 @@ def creerListeEpisodes(url,saison,nomComplet,fanart):
 
                                 mediaUrl=TELEQUEBEC_BASE_URL+urlEpisode
                                 if (nomComplet==1):
-                                       addLink(nomEmission+' : '+nomEpisode,mediaUrl,icon,'',nomEmission,duree,fanart)
+                                    addLink(nomEmission+' : '+nomEpisode,mediaUrl,icon,'',nomEmission,duree,fanart)
                                 else:
-                                       addLink(nomEpisode,mediaUrl,icon,'',nomEmission,duree,fanart)
+                                    addLink(nomEpisode,mediaUrl,icon,'',nomEmission,duree,fanart)
 
 def trouverInfosEpisode(url):
        link = get_cached_content(url)
@@ -388,7 +392,7 @@ def addEmission(name,url,iconimage,plot,fanart):
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
         return ok
 
-def addDirSaison(name,url,iconimage,saison):
+def addDirSaison(name,url,iconimage,saison,emission):
         prochainMode = 3
         u=sys.argv[0]+"?url="+urllib.quote_plus(url)+\
             "&mode="+str(prochainMode)+\
@@ -398,7 +402,7 @@ def addDirSaison(name,url,iconimage,saison):
             "&fullName="+urllib.quote_plus(str(fullName))
         ok=True
         liz=xbmcgui.ListItem(name, iconImage=addon_images_base_path+'default-folder.png', thumbnailImage=iconimage)
-        liz.setInfo( type="Video", infoLabels={ "Title": urllib.unquote(name),"Plot":name} )
+        liz.setInfo( type="Video", infoLabels={ "Title": urllib.unquote(name),"Plot":'[B]'+emission+'[/B][CR]'+name} )
         if addon.getSetting('FanartEnabled') == 'true':
             if addon.getSetting('FanartEmissionsEnabled') == 'true':
                 liz.setProperty('fanart_image', iconimage)
@@ -426,7 +430,7 @@ def addLink(name,url,iconimage,url_info,plot,duree,fanart):
 
         liz=xbmcgui.ListItem(name, iconImage=addon_images_base_path+"default-video.png", thumbnailImage=iconimage)
         #liz.setInfo( type="Video", infoLabels={"Title": urllib.quote_plus(name),"Plot":plot,"Duration":duree})
-        liz.setInfo( type="Video", infoLabels={"Title": name,"Plot":plot,"Duration":duree})
+        liz.setInfo(type="Video", infoLabels={"Title": name,"Plot":plot,"Duration":duree})
         if fanart==addon_fanart:
             fanart=iconimage 
         if addon.getSetting('FanartEnabled') == 'true':
