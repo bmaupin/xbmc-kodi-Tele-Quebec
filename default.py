@@ -184,7 +184,7 @@ def creerDossiers(url):
                         icon = rechercherUnElement('src="(.+?)"',item)
                         fanart = icon
                         #infos = trouverInfosEpisode(TELEQUEBEC_BASE_URL+urlEpisode)
-                        addEmission(nomDossier,TELEQUEBEC_BASE_URL+urlDossier,icon,'[B]'+nomDossier+'[/B]',fanart)
+                        addEmission(nomDossier,TELEQUEBEC_BASE_URL+urlDossier,icon,'',fanart)
 
 def creerListeVideos(url,fanart):
        if fanart == '':
@@ -207,6 +207,7 @@ def creerListeSaisons(link,fanart):
                if icon == "":
                        icon=addon_images_base_path+'default-folder.png'
                addDirSaison(nomSaison,url,icon,nbSaisons,nomEmission)
+               xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_NONE) 
        if nbSaisons==0:
                creerListeEpisodes(url,1,fullName,fanart)
        return nbSaisons
@@ -228,7 +229,17 @@ def creerListeSupplement(link,nbSaisons):
 def creerListeEpisodes(url,saison,nomComplet,fanart):
         link = get_cached_content(url)
 
+        #emissionHeader = rechercherUnElement('<div class="emissionHeader">',link) 
+        #log("EEE:"+emissionHeader)
+        #sub = rechercherUnElement('<ul class="menu(.+?)</ul>',link)
+        #nomEmission2 = rechercherUnElement('<h1>(.+?)</h1>',sub)
+        try: 
+            nomEmission2 = urllib.unquote_plus(params["emission"])
+        except:
+            nomEmission2 = ''
+
         containerSaison = re.split('<div class="listItem floatContainer">',link) 
+
         if len(containerSaison)<saison:
                 debugPrint('Probleme de scraper de saisons')
         else:
@@ -250,31 +261,26 @@ def creerListeEpisodes(url,saison,nomComplet,fanart):
                                 dureeBlock = rechercherUnElement('"infoSaison"(.+?)</p>',item)
                                 duree = rechercherUnElement('(\d+:\d+:\d+)',dureeBlock)
                                 # C'est laid. FIXME
-                                log("d1-:"+duree)
                                 if not duree:
                                     duree = rechercherUnElement('(\d+:\d+)',dureeBlock)
-                                    log("d2-:"+duree)
                                     if not duree:
                                         duree=""
-                                        log("d3-:"+duree)
                                     else:
                                         d_entries=re.findall(r'(\d+):(\d+)', duree)
                                         duree=int(d_entries[0][0])*60+int(d_entries[0][1])
-                                        log("d4-:"+str(duree))
                                 else:
                                     # hh:mm:ss
                                     d_entries=re.findall(r'(\d+):(\d+):(\d+)', duree)
                                     duree=int(d_entries[0][0])*60*60+int(d_entries[0][1])*60+int(d_entries[0][2])
-                                    log("d5-:"+str(duree))
                                 # / C'est laid. FIXME
 
                                 #infos = trouverInfosEpisode(TELEQUEBEC_BASE_URL+urlEpisode)
 
                                 mediaUrl=TELEQUEBEC_BASE_URL+urlEpisode
                                 if (nomComplet==1):
-                                    addLink(nomEmission+' : '+nomEpisode,mediaUrl,icon,'',nomEmission,duree,fanart)
+                                    addLink(nomEmission+' : '+nomEpisode,mediaUrl,icon,'',nomEmission2,duree,fanart)
                                 else:
-                                    addLink(nomEpisode,mediaUrl,icon,'',nomEmission,duree,fanart)
+                                    addLink(nomEpisode,mediaUrl,icon,'',nomEmission2,duree,fanart)
 
 def trouverInfosEpisode(url):
        link = get_cached_content(url)
@@ -360,7 +366,15 @@ def addDir(name,url,mode,iconimage,categorie,nomComplet):
             "&fullName="+urllib.quote_plus(str(nomComplet))
         ok=True
         liz=xbmcgui.ListItem(urllib.unquote(name), iconImage=addon_images_base_path+'default-folder.png', thumbnailImage=iconimage)
-        liz.setInfo( type="Video", infoLabels={ "Title": urllib.unquote(name) } )
+        liz.setInfo(\
+            type="Video",\
+            infoLabels={\
+                "Title": urllib.unquote(name),\
+                "plot":\
+                    addon.getAddonInfo('id')+' v.'+addon.getAddonInfo('version')+'[CR]'+\
+                    '[B]'+urllib.unquote(name.replace('-- ',''))+'[/B]'\
+            }\
+        )
         if addon.getSetting('FanartEnabled') == 'true':
             if addon.getSetting('FanartEmissionsEnabled') == 'true':
                 if iconimage==addon_images_base_path+'default-folder.png': # Main dicrectory listing
@@ -383,7 +397,10 @@ def addEmission(name,url,iconimage,plot,fanart):
             "&fullName="+urllib.quote_plus(str(fullName))
         ok=True
         liz=xbmcgui.ListItem(name, iconImage=addon_images_base_path+'default-folder.png', thumbnailImage=iconimage)
-        liz.setInfo( type="Video", infoLabels={ "Title": urllib.unquote(name),"Plot":plot } )
+        liz.setInfo(\
+            type="Video",\
+            infoLabels={"Title":urllib.unquote(name),"Plot":'[B]'+urllib.unquote(name.lstrip())+'[/B]'+'[CR]'+plot.lstrip()}\
+        )
         if addon.getSetting('FanartEnabled') == 'true':
             if addon.getSetting('FanartEmissionsEnabled') == 'true':
                 liz.setProperty('fanart_image', fanart)
@@ -397,6 +414,7 @@ def addDirSaison(name,url,iconimage,saison,emission):
         u=sys.argv[0]+"?url="+urllib.quote_plus(url)+\
             "&mode="+str(prochainMode)+\
             "&name="+urllib.quote_plus(name)+\
+            "&emission="+urllib.quote_plus(emission)+\
             "&fanart="+urllib.quote_plus(str(iconimage))+\
             "&season="+str(saison)+\
             "&fullName="+urllib.quote_plus(str(fullName))
@@ -418,19 +436,21 @@ def addLink(name,url,iconimage,url_info,plot,duree,fanart):
             "&name="+urllib.quote_plus(name)+\
             "&Info="+urllib.quote_plus(url_info)
 
-#        mediaData = get_cached_content(url_info)
-#        mediaUID = rechercherUnElement('mediaUID: \'Limelight_(.+?)\'',mediaData)
-#        if mediaUID == "":
-#            mediaID = rechercherUnElement('mediaId: (.+?),',link)
-#            if mediaID != "":
-#                mediaMetadata = get_cached_content('http://medias.api.telequebec.tv/api/v1/media/%s' % mediaID)
-#                mediaMetadataJSON = simplejson.loads(mediaMetadata)
-#                mediaUID = mediaMetadataJSON['media']['streamInfo']['sourceId'] 
-#        log('mediaUID: '+ mediaUID)
+        if plot != '':
+            plot = '[B]'+plot.lstrip()+'[/B]'+'[CR]'+name.lstrip()
+        else:
+            plot = name.lstrip()
 
         liz=xbmcgui.ListItem(name, iconImage=addon_images_base_path+"default-video.png", thumbnailImage=iconimage)
-        #liz.setInfo( type="Video", infoLabels={"Title": urllib.quote_plus(name),"Plot":plot,"Duration":duree})
-        liz.setInfo(type="Video", infoLabels={"Title": name,"Plot":plot,"Duration":duree})
+        liz.setInfo(\
+            type="Video",\
+            infoLabels={\
+                "Title": name,\
+                "Plot":plot,\
+                "Duration":duree\
+            }
+        )
+
         if fanart==addon_fanart:
             fanart=iconimage 
         if addon.getSetting('FanartEnabled') == 'true':
@@ -454,7 +474,7 @@ def setSortingMethods(mode):
         log('MODE:'+str(mode))
         if mode != None and mode != 1:
             if addon.getSetting('SortMethodTvShow') == '1':
-                xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_TITLE)
+                xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_TITLE) 
                 xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_TITLE_IGNORE_THE)
         return
 
@@ -477,6 +497,7 @@ log('--- init -----------------')
 params=get_params()
 url=None
 name=None
+emission=None
 mode=None
 url_info=None
 categorie=None
@@ -491,6 +512,11 @@ except:
 try:
         name=urllib.unquote_plus(params["name"])
         log("params['name']:"+name)
+except:
+        pass
+try:
+        emission=urllib.unquote_plus(params["emission"])
+        log("params['emission']:"+emission)
 except:
         pass
 try:
