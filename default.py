@@ -261,7 +261,7 @@ def creer_liste_episodes(the_url, saison, nom_complet, the_fanart):
     #sub = rechercher_un_element('<ul class="menu(.+?)</ul>',link)
     #nom_emission = rechercher_un_element('<h1>(.+?)</h1>',sub)
     try:
-        nom_emission_2 = urllib.unquote_plus(params["emission"])
+        nom_emission_2 = urllib.unquote_plus(PARAMS["emission"])
     except Exception:
         nom_emission_2 = ''
 
@@ -306,7 +306,8 @@ def creer_liste_episodes(the_url, saison, nom_complet, the_fanart):
                 # Pour eviter les duplication (surtout dans Populaires et Recents)
                 the_full_name = nom_emission+' : '+nom_episode
                 try:
-                    media_url_liste_index = media_url_list.index(the_full_name)
+                    #media_url_liste_index = media_url_list.index(the_full_name)
+                    log('media_url_list.index:'+str(media_url_list.index(the_full_name)))
                 except ValueError:
                     media_url_list.append(the_full_name)
                     media_url = TELEQUEBEC_BASE_URL+url_episode
@@ -550,9 +551,10 @@ def log(msg):
         xbmc.log('[%s - DEBUG]: %s' % (ADDON_NAME, msg))
 
 # ---
-
 log('--- init -----------------')
-params = get_params()
+# ---
+
+PARAMS = get_params()
 url = None
 name = None
 emission = None
@@ -563,48 +565,48 @@ season = 0
 fullName = 0
 
 try:
-    url = urllib.unquote_plus(params["url"])
-    log("params['url']:"+url)
+    url = urllib.unquote_plus(PARAMS["url"])
+    log("PARAMS['url']:"+url)
 except Exception:
     pass
 try:
-    name = urllib.unquote_plus(params["name"])
-    log("params['name']:"+name)
+    name = urllib.unquote_plus(PARAMS["name"])
+    log("PARAMS['name']:"+name)
 except Exception:
     pass
 try:
-    emission = urllib.unquote_plus(params["emission"])
-    log("params['emission']:"+emission)
+    emission = urllib.unquote_plus(PARAMS["emission"])
+    log("PARAMS['emission']:"+emission)
 except Exception:
     pass
 try:
-    mode = int(params["mode"])
-    log("params['mode']:"+str(mode))
+    mode = int(PARAMS["mode"])
+    log("PARAMS['mode']:"+str(mode))
 except Exception:
     pass
 try:
-    categorie = int(params["categorie"])
-    log("params['categorie']:"+str(categorie))
+    categorie = int(PARAMS["categorie"])
+    log("PARAMS['categorie']:"+str(categorie))
 except Exception:
     pass
 try:
-    url_info = int(params["Info"])
-    log("params['Info']:"+str(url_info))
+    url_info = int(PARAMS["Info"])
+    log("PARAMS['Info']:"+str(url_info))
 except Exception:
     pass
 try:
-    season = int(params["season"])
-    log("params['season']:"+str(season))
+    season = int(PARAMS["season"])
+    log("PARAMS['season']:"+str(season))
 except Exception:
     pass
 try:
-    fullName = int(params["fullName"])
-    log("params['fullName']:"+str(fullName))
+    fullName = int(PARAMS["fullName"])
+    log("PARAMS['fullName']:"+str(fullName))
 except Exception:
     pass
 try:
-    fanart = urllib.unquote_plus(params["fanart"])
-    log("params['fanart']:"+fanart)
+    fanart = urllib.unquote_plus(PARAMS["fanart"])
+    log("PARAMS['fanart']:"+fanart)
 except Exception:
     fanart = ''
     pass
