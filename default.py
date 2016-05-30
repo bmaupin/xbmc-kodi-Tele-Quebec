@@ -249,7 +249,7 @@ def creerListeEpisodes(url,saison,nomComplet,fanart):
                         containerSaisonStr = ''.join(containerSaison[saison])
 
                  liste = re.split('<div class="item',containerSaisonStr)
-                 medialUrlList=[]
+                 mediaUrlList=[]
                  for item in liste:
                         sub2 = re.compile('<div class="info">(.+?)</div>',re.DOTALL).findall(item)
                         if len(sub2)>0:
@@ -276,11 +276,18 @@ def creerListeEpisodes(url,saison,nomComplet,fanart):
 
                                 #infos = trouverInfosEpisode(TELEQUEBEC_BASE_URL+urlEpisode)
 
-                                mediaUrl=TELEQUEBEC_BASE_URL+urlEpisode
-                                if (nomComplet==1):
-                                    addLink(nomEmission+' : '+nomEpisode,mediaUrl,icon,'',nomEmission2,duree,fanart)
-                                else:
-                                    addLink(nomEpisode,mediaUrl,icon,'',nomEmission2,duree,fanart)
+                                # Pour eviter les duplication (surtout dans Populaires et Recents)
+                                fullName=nomEmission+' : '+nomEpisode
+                                try:
+                                    mediaUrlListIndex=mediaUrlList.index(fullName)
+                                except ValueError:
+                                    mediaUrlList.append(fullName)
+                                    mediaUrl=TELEQUEBEC_BASE_URL+urlEpisode
+                                    if (nomComplet==1):
+                                        addLink(fullName,mediaUrl,icon,'',nomEmission2,duree,fanart)
+                                    else:
+                                        addLink(nomEpisode,mediaUrl,icon,'',nomEmission2,duree,fanart)
+
 
 def trouverInfosEpisode(url):
        link = get_cached_content(url)
