@@ -45,9 +45,9 @@ def get_cached_content(path):
             content = get_url_txt(path)
             try:
                 file(filename, "w").write(content) # cache the requested web content
-            except:
+            except Exception:
                 traceback.print_exc()
-    except:
+    except Exception:
         return None
     return content
 
@@ -262,7 +262,7 @@ def creer_liste_episodes(the_url, saison, nom_complet, the_fanart):
     #nom_emission = rechercher_un_element('<h1>(.+?)</h1>',sub)
     try:
         nom_emission_2 = urllib.unquote_plus(params["emission"])
-    except:
+    except Exception:
         nom_emission_2 = ''
 
     container_saison = re.split('<div class="listItem floatContainer">', link)
@@ -322,7 +322,7 @@ def trouver_info_episode(the_url):
     description = rechercher_un_element('<meta name="description" content="(.+?)>', link)
     return [icon, description]
 
-def jouer_video(the_url, name, url_info):
+def jouer_video(the_url, url_info):
     """ function docstring """
     link = get_cached_content(the_url)
 
@@ -400,7 +400,7 @@ def get_params():
 def add_dir(name, url, mode, iconimage, categorie, nom_complet):
     """ function docstring """
     name = name
-    u = sys.argv[0]+"?url="+urllib.quote_plus(url)+\
+    entry_url = sys.argv[0]+"?url="+urllib.quote_plus(url)+\
         "&mode="+str(mode)+\
         "&name="+urllib.quote_plus(name)+\
         "&categorie="+str(categorie)+\
@@ -424,7 +424,7 @@ def add_dir(name, url, mode, iconimage, categorie, nom_complet):
                 liz.setProperty('fanart_image', iconimage)
         else:
             liz.setProperty('fanart_image', ADDON_FANART)
-    is_it_ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
+    is_it_ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=entry_url, listitem=liz, isFolder=True)
     return is_it_ok
 
 def add_emission(name, the_url, iconimage, plot, the_fanart):
@@ -432,7 +432,7 @@ def add_emission(name, the_url, iconimage, plot, the_fanart):
     prochain_mode = 2
     if the_fanart == '':
         the_fanart = iconimage
-    u = sys.argv[0]+"?url="+urllib.quote_plus(the_url)+\
+    entry_url = sys.argv[0]+"?url="+urllib.quote_plus(the_url)+\
         "&mode="+str(prochain_mode)+\
         "&name="+urllib.quote_plus(name)+\
         "&fanart="+urllib.quote_plus(str(the_fanart))+\
@@ -451,13 +451,13 @@ def add_emission(name, the_url, iconimage, plot, the_fanart):
             liz.setProperty('fanart_image', the_fanart)
         else:
             liz.setProperty('fanart_image', ADDON_FANART)
-    is_it_ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
+    is_it_ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=entry_url, listitem=liz, isFolder=True)
     return is_it_ok
 
 def add_dir_saison(name, the_url, iconimage, saison, emission):
     """ function docstring """
     prochain_mode = 3
-    u = sys.argv[0]+"?url="+urllib.quote_plus(the_url)+\
+    entry_url = sys.argv[0]+"?url="+urllib.quote_plus(the_url)+\
         "&mode="+str(prochain_mode)+\
         "&name="+urllib.quote_plus(name)+\
         "&emission="+urllib.quote_plus(emission)+\
@@ -478,13 +478,13 @@ def add_dir_saison(name, the_url, iconimage, saison, emission):
             liz.setProperty('fanart_image', iconimage)
         else:
             liz.setProperty('fanart_image', ADDON_FANART)
-    is_it_ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
+    is_it_ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=entry_url, listitem=liz, isFolder=True)
     return is_it_ok
 
 def add_link(name, the_url, iconimage, url_info, plot, duree, the_fanart):
     """ function docstring """
     is_it_ok = True
-    u = sys.argv[0]+"?url="+urllib.quote_plus(the_url)+\
+    entry_url = sys.argv[0]+"?url="+urllib.quote_plus(the_url)+\
         "&mode=4"+\
         "&name="+urllib.quote_plus(name)+\
         "&Info="+urllib.quote_plus(url_info)
@@ -515,7 +515,7 @@ def add_link(name, the_url, iconimage, url_info, plot, duree, the_fanart):
         else:
             liz.setProperty('fanart_image', ADDON_FANART)
 
-    is_it_ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=False)
+    is_it_ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=entry_url, listitem=liz, isFolder=False)
     return is_it_ok
 
 def set_content(content):
@@ -535,13 +535,13 @@ def set_sorting_methods(mode):
 
 def debug_print(texte):
     """ function docstring """
-    u = sys.argv[0]+"?url="+urllib.quote_plus(TELEQUEBEC_BASE_URL)+\
+    entry_url = sys.argv[0]+"?url="+urllib.quote_plus(TELEQUEBEC_BASE_URL)+\
         "&mode="+str(0)+\
         "&name="+urllib.quote_plus(texte)
     is_it_ok = True
     liz = xbmcgui.ListItem(texte, iconImage=ADDON_IMAGES_BASEPATH+'default-folder.png', thumbnailImage='')
     liz.setInfo(type="Video", infoLabels={"Title": texte})
-    is_it_ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
+    is_it_ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=entry_url, listitem=liz, isFolder=True)
     return is_it_ok
 
 def log(msg):
@@ -565,47 +565,47 @@ fullName = 0
 try:
     url = urllib.unquote_plus(params["url"])
     log("params['url']:"+url)
-except:
+except Exception:
     pass
 try:
     name = urllib.unquote_plus(params["name"])
     log("params['name']:"+name)
-except:
+except Exception:
     pass
 try:
     emission = urllib.unquote_plus(params["emission"])
     log("params['emission']:"+emission)
-except:
+except Exception:
     pass
 try:
     mode = int(params["mode"])
     log("params['mode']:"+str(mode))
-except:
+except Exception:
     pass
 try:
     categorie = int(params["categorie"])
     log("params['categorie']:"+str(categorie))
-except:
+except Exception:
     pass
 try:
     url_info = int(params["Info"])
     log("params['Info']:"+str(url_info))
-except:
+except Exception:
     pass
 try:
     season = int(params["season"])
     log("params['season']:"+str(season))
-except:
+except Exception:
     pass
 try:
     fullName = int(params["fullName"])
     log("params['fullName']:"+str(fullName))
-except:
+except Exception:
     pass
 try:
     fanart = urllib.unquote_plus(params["fanart"])
     log("params['fanart']:"+fanart)
-except:
+except Exception:
     fanart = ''
     pass
 
@@ -626,7 +626,7 @@ elif mode == 3:
     set_content('episodes')
 
 elif mode == 4:
-    jouer_video(url, name, url_info)
+    jouer_video(url, url_info)
 
 elif mode == 6:
     creer_dossiers(url)
