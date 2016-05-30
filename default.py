@@ -8,7 +8,7 @@ if sys.version >= "2.5":
 else:
     from md5 import new as _hash
 
-# version 0.2.7 - By SlySen
+# version 2.0.2 - By SlySen
 # version 0.2.6 - By CB
 
 ADDON = xbmcaddon.Addon()
