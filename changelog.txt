@@ -1,4 +1,4 @@
-[B]2.0.2 | SlySen | 2016-05-28[/B] 
+[B]2.0.2 | SlySen | 2016-05-31[/B] 
 - Network availability and TQ Website connection verification
 - Now the addon Python code is Pylint compliant
 - Remove videos duplication in recents and populaires
