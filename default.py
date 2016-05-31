@@ -1,15 +1,20 @@
 # -*- coding: cp1252 -*-
 
-
 """ -*- coding: utf-8 -*- """
+#
+# version 2.0.2 - By SlySen
+# version 0.2.6 - By CB
+#
+# pylint...: --max-line-length 120
+# vim......: set expandtab
+# vim......: set tabstop=4
+#
 import os, time, urllib, urllib2, re, sys, traceback, xbmcplugin, xbmcaddon, xbmcgui, xbmc, simplejson
 if sys.version >= "2.5":
     from hashlib import md5 as _hash
 else:
     from md5 import new as _hash
 
-# version 2.0.2 - By SlySen
-# version 0.2.6 - By CB
 
 ADDON = xbmcaddon.Addon()
 ADDON_CACHE_BASEDIR = os.path.join(xbmc.translatePath(ADDON.getAddonInfo('path')), ".cache")
@@ -45,13 +50,13 @@ def get_cached_content(path):
             content = get_url_txt(path)
             try:
                 file(filename, "w").write(content) # cache the requested web content
-            except Exception:
+            except StandardError:
                 traceback.print_exc()
-    except Exception:
+    except StandardError:
         return None
     return content
 
-#Merci à l'auteur de cette fonction
+# Merci à l'auteur de cette fonction
 def unescape_callback(matches):
     """ function docstring """
     html_entities =\
@@ -84,7 +89,7 @@ def unescape_callback(matches):
     val = matches.group(1)
 
     try:
-        if entity[:2] == '\u':
+        if entity[:2] == r'\u':
             return entity.decode('unicode-escape')
         elif entity[:3] == '&#x':
             return unichr(int(val, 16))
@@ -99,7 +104,7 @@ def unescape_callback(matches):
 def html_unescape(data):
     """ function docstring """
     data = data.decode('utf-8')
-    data = re.sub('&#?x?(\w+);|\\\\u\d{4}', unescape_callback, data)
+    data = re.sub(r'&#?x?(\w+);|\\\\u\d{4}', unescape_callback, data)
     data = data.encode('utf-8')
     return data
 
@@ -232,16 +237,16 @@ def creer_liste_saisons(link, the_fanart):
         log(nom_emission)
         if icon == "":
             icon = ADDON_IMAGES_BASEPATH+'default-folder.png'
-        add_dir_saison(nom_saison, url, icon, nb_saisons, nom_emission)
+        add_dir_saison(nom_saison, URL, icon, nb_saisons, nom_emission)
         xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_NONE)
     if nb_saisons == 0:
-        creer_liste_episodes(url, 1, fullName, the_fanart)
+        creer_liste_episodes(URL, 1, FULLNAME, the_fanart)
     return nb_saisons
 
 def creer_liste_supplement(link, nb_saisons):
     """ function docstring """
     main = re.compile('class="extrasEmission"(.+?)</section>', re.DOTALL).findall(link)
-    for extra in main:
+    for _ in main:
         nb_saisons = nb_saisons+1
         titre = rechercher_un_element('<h2.*?<span>(.+?)</span>', link)
         sub = rechercher_un_element('class="emissionHeader"(.+?)</div>', link)
@@ -249,24 +254,12 @@ def creer_liste_supplement(link, nb_saisons):
         nom_emission = rechercher_un_element('<h1>(.+?)</h1>', sub)
         if icon == "":
             icon = ADDON_IMAGES_BASEPATH+'default-folder.png'
-        add_dir_saison(titre, url, icon, nb_saisons, nom_emission)
+        add_dir_saison(titre, URL, icon, nb_saisons, nom_emission)
     return nb_saisons
 
 def creer_liste_episodes(the_url, saison, nom_complet, the_fanart):
     """ function docstring """
-    link = get_cached_content(the_url)
-
-    #emissionHeader = rechercher_un_element('<div class="emissionHeader">',link)
-    #log("EEE:"+emissionHeader)
-    #sub = rechercher_un_element('<ul class="menu(.+?)</ul>',link)
-    #nom_emission = rechercher_un_element('<h1>(.+?)</h1>',sub)
-    try:
-        nom_emission_2 = urllib.unquote_plus(PARAMS["emission"])
-    except Exception:
-        nom_emission_2 = ''
-
-    container_saison = re.split('<div class="listItem floatContainer">', link)
-
+    container_saison = re.split('<div class="listItem floatContainer">', get_cached_content(the_url))
     if len(container_saison) < saison:
         debug_print('Probleme de scraper de saisons')
     else:
@@ -285,36 +278,53 @@ def creer_liste_episodes(the_url, saison, nom_complet, the_fanart):
                 nom_emission = rechercher_un_element('<p(?:.+?)>(.+?)</p>', sub2)
                 nom_episode = rechercher_un_element('<a(?:.+?)>(.+?)</a>', sub2)
                 icon = rechercher_un_element('src="(.+?)"', item)
-                duree_block = rechercher_un_element('"infoSaison"(.+?)</p>', item)
-                duree = rechercher_un_element('(\d+:\d+:\d+)', duree_block)
-                # C'est laid. FIXME
-                if not duree:
-                    duree = rechercher_un_element('(\d+:\d+)', duree_block)
-                    if not duree:
-                        duree = ""
-                    else:
-                        d_entries = re.findall(r'(\d+):(\d+)', duree)
-                        duree = int(d_entries[0][0])*60+int(d_entries[0][1])
-                else:
-                    # hh:mm:ss
-                    d_entries = re.findall(r'(\d+):(\d+):(\d+)', duree)
-                    duree = int(d_entries[0][0])*60*60+int(d_entries[0][1])*60+int(d_entries[0][2])
-                # / C'est laid. FIXME
-
-                #infos = trouver_info_episode(TELEQUEBEC_BASE_URL+url_episode)
+                duree = get_duration_in_seconds(rechercher_un_element('"infoSaison"(.+?)</p>', item))
 
                 # Pour eviter les duplication (surtout dans Populaires et Recents)
-                the_full_name = nom_emission+' : '+nom_episode
                 try:
-                    #media_url_liste_index = media_url_list.index(the_full_name)
-                    log('media_url_list.index:'+str(media_url_list.index(the_full_name)))
+                    log('media_url_list.index:'+str(media_url_list.index(nom_emission+' : '+nom_episode)))
                 except ValueError:
-                    media_url_list.append(the_full_name)
-                    media_url = TELEQUEBEC_BASE_URL+url_episode
+                    media_url_list.append(nom_emission+' : '+nom_episode)
                     if nom_complet == 1:
-                        add_link(the_full_name, media_url, icon, '', nom_emission_2, duree, the_fanart)
+                        add_link(\
+                            nom_emission+' : '+nom_episode,\
+                            TELEQUEBEC_BASE_URL+url_episode,\
+                            icon,\
+                            '',\
+                            get_nom_emission_2(),\
+                            duree,\
+                            the_fanart\
+                        )
                     else:
-                        add_link(nom_episode, media_url, icon, '', nom_emission_2, duree, the_fanart)
+                        add_link(\
+                            nom_episode,\
+                            TELEQUEBEC_BASE_URL+url_episode,\
+                            icon,\
+                            '',\
+                            get_nom_emission_2(),\
+                            duree,\
+                            the_fanart\
+                        )
+
+def get_duration_in_seconds(duree_block):
+    """ function docstring """
+    duree = rechercher_un_element(r'(\d+:\d+:\d+)', duree_block)
+    if not duree:
+        duree = rechercher_un_element(r'(\d+:\d+)', duree_block)
+        if not duree:
+            duree = 0
+        else:
+            d_entries = re.findall(r'(\d+):(\d+)', duree)
+            duree = int(d_entries[0][0])*60+int(d_entries[0][1])
+    else:
+        # hh:mm:ss
+        d_entries = re.findall(r'(\d+):(\d+):(\d+)', duree)
+        duree = int(d_entries[0][0])*60*60+int(d_entries[0][1])*60+int(d_entries[0][2])
+
+    if duree < 60:
+        return 60
+    else:
+        return duree
 
 def trouver_info_episode(the_url):
     """ function docstring """
@@ -323,7 +333,7 @@ def trouver_info_episode(the_url):
     description = rechercher_un_element('<meta name="description" content="(.+?)>', link)
     return [icon, description]
 
-def jouer_video(the_url, url_info):
+def jouer_video(the_url):
     """ function docstring """
     link = get_cached_content(the_url)
 
@@ -333,16 +343,17 @@ def jouer_video(the_url, url_info):
     if media_uid == "":
         media_id = rechercher_un_element('mediaId: (.+?),', link)
         if media_id != "":
-            media_metadata = get_cached_content('http://medias.api.telequebec.tv/api/v1/media/%s' % media_id)
-            media_metadata_json = simplejson.loads(media_metadata)
+            media_metadata_json = get_cached_content('http://medias.api.telequebec.tv/api/v1/media/%s' % media_id)
+            media_metadata_json = simplejson.loads(media_metadata_json)
             media_uid = media_metadata_json['media']['streamInfo']['sourceId']
     # -->
 
     # Obtenir JSON avec liens RTMP du playlistService
-    link = get_cached_content(\
-        'http://production.ps.delve.cust.lldns.net/r/PlaylistService/media/%s/getPlaylistByMediaId' % media_uid\
+    video_json = simplejson.loads(\
+        get_cached_content(\
+            'http://production.ps.delve.cust.lldns.net/r/PlaylistService/media/%s/getPlaylistByMediaId' % media_uid\
+        )\
     )
-    video_json = simplejson.loads(link)
 
     # Preparer list de videos à jouer
     playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
@@ -358,13 +369,13 @@ def jouer_video(the_url, url_info):
                 stream_url = stream['url']
 
         if stream_url:
-            # Séparer le lien en RTMP et PLAYPATH
-            rtmp_url = stream_url[:stream_url.find('mp4')]
-            play_path = stream_url[stream_url.find('mp4'):]
-
             # Générer un lien compatible pour librtmp
-            swf_url = 'http://s.delvenetworks.com/deployments/flash-player/flash-player-5.10.1.swf?playerForm=Chromeless'
-            url_final = '%s playPath=%s swfUrl=%s swfVfy=true' % (rtmp_url, play_path, swf_url)
+            # rtmp_url - play_path - swf_url
+            url_final = '%s playPath=%s swfUrl=%s swfVfy=true' % (\
+                stream_url[:stream_url.find('mp4')],\
+                stream_url[stream_url.find('mp4'):],\
+                'http://s.delvenetworks.com/deployments/flash-player/flash-player-5.10.1.swf?playerForm=Chromeless'\
+            )
 
             log('Starting playback of :' + urllib.quote_plus(url_final))
             item = xbmcgui.ListItem(\
@@ -398,16 +409,27 @@ def get_params():
 
     return param
 
+def get_nom_emission_2():
+    """ function docstring """
+    try:
+        nom_emission_2 = urllib.unquote_plus(PARAMS["emission"])
+    except StandardError:
+        nom_emission_2 = ''
+    return nom_emission_2
+
 def add_dir(name, url, mode, iconimage, categorie, nom_complet):
     """ function docstring """
-    name = name
     entry_url = sys.argv[0]+"?url="+urllib.quote_plus(url)+\
         "&mode="+str(mode)+\
         "&name="+urllib.quote_plus(name)+\
         "&categorie="+str(categorie)+\
         "&fullName="+urllib.quote_plus(str(nom_complet))
     is_it_ok = True
-    liz = xbmcgui.ListItem(urllib.unquote(name), iconImage=ADDON_IMAGES_BASEPATH+'default-folder.png', thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(\
+        urllib.unquote(name),\
+        iconImage=ADDON_IMAGES_BASEPATH+'default-folder.png',\
+        thumbnailImage=iconimage\
+    )
     liz.setInfo(\
         type="Video",\
         infoLabels={\
@@ -437,7 +459,7 @@ def add_emission(name, the_url, iconimage, plot, the_fanart):
         "&mode="+str(prochain_mode)+\
         "&name="+urllib.quote_plus(name)+\
         "&fanart="+urllib.quote_plus(str(the_fanart))+\
-        "&fullName="+urllib.quote_plus(str(fullName))
+        "&fullName="+urllib.quote_plus(str(FULLNAME))
     is_it_ok = True
     liz = xbmcgui.ListItem(name, iconImage=ADDON_IMAGES_BASEPATH+'default-folder.png', thumbnailImage=iconimage)
     liz.setInfo(\
@@ -464,7 +486,7 @@ def add_dir_saison(name, the_url, iconimage, saison, emission):
         "&emission="+urllib.quote_plus(emission)+\
         "&fanart="+urllib.quote_plus(str(iconimage))+\
         "&season="+str(saison)+\
-        "&fullName="+urllib.quote_plus(str(fullName))
+        "&fullName="+urllib.quote_plus(str(FULLNAME))
     is_it_ok = True
     liz = xbmcgui.ListItem(name, iconImage=ADDON_IMAGES_BASEPATH+'default-folder.png', thumbnailImage=iconimage)
     liz.setInfo(\
@@ -555,85 +577,85 @@ log('--- init -----------------')
 # ---
 
 PARAMS = get_params()
-url = None
-name = None
-emission = None
-mode = None
-url_info = None
-categorie = None
-season = 0
-fullName = 0
+URL = None
+NAME = None
+EMISSION = None
+MODE = None
+URL_INFO = None
+CATEGORIE = None
+SEASON = 0
+FULLNAME = 0
+FANART = None
 
 try:
-    url = urllib.unquote_plus(PARAMS["url"])
-    log("PARAMS['url']:"+url)
-except Exception:
+    URL = urllib.unquote_plus(PARAMS["url"])
+    log("PARAMS['url']:"+URL)
+except StandardError:
     pass
 try:
-    name = urllib.unquote_plus(PARAMS["name"])
-    log("PARAMS['name']:"+name)
-except Exception:
+    NAME = urllib.unquote_plus(PARAMS["name"])
+    log("PARAMS['name']:"+NAME)
+except StandardError:
     pass
 try:
-    emission = urllib.unquote_plus(PARAMS["emission"])
-    log("PARAMS['emission']:"+emission)
-except Exception:
+    EMISSION = urllib.unquote_plus(PARAMS["emission"])
+    log("PARAMS['emission']:"+EMISSION)
+except StandardError:
     pass
 try:
-    mode = int(PARAMS["mode"])
-    log("PARAMS['mode']:"+str(mode))
-except Exception:
+    MODE = int(PARAMS["mode"])
+    log("PARAMS['mode']:"+str(MODE))
+except StandardError:
     pass
 try:
-    categorie = int(PARAMS["categorie"])
-    log("PARAMS['categorie']:"+str(categorie))
-except Exception:
+    CATEGORIE = int(PARAMS["categorie"])
+    log("PARAMS['categorie']:"+str(CATEGORIE))
+except StandardError:
     pass
 try:
-    url_info = int(PARAMS["Info"])
-    log("PARAMS['Info']:"+str(url_info))
-except Exception:
+    URL_INFO = int(PARAMS["Info"])
+    log("PARAMS['Info']:"+str(URL_INFO))
+except StandardError:
     pass
 try:
-    season = int(PARAMS["season"])
-    log("PARAMS['season']:"+str(season))
-except Exception:
+    SEASON = int(PARAMS["season"])
+    log("PARAMS['season']:"+str(SEASON))
+except StandardError:
     pass
 try:
-    fullName = int(PARAMS["fullName"])
-    log("PARAMS['fullName']:"+str(fullName))
-except Exception:
+    FULLNAME = int(PARAMS["fullName"])
+    log("PARAMS['fullName']:"+str(FULLNAME))
+except StandardError:
     pass
 try:
-    fanart = urllib.unquote_plus(PARAMS["fanart"])
-    log("PARAMS['fanart']:"+fanart)
-except Exception:
-    fanart = ''
-    pass
+    FANART = urllib.unquote_plus(PARAMS["fanart"])
+    log("PARAMS['fanart']:"+FANART)
+except StandardError:
+    FANART = ''
 
-if mode == None or url == None or len(url) < 1:
+if MODE == None or URL == None or len(URL) < 1:
     creer_menu_categories()
     set_content('episodes')
 
-elif mode == 1:
-    creer_liste_filtree(categorie, url)
+elif MODE == 1:
+    creer_liste_filtree(CATEGORIE, URL)
     set_content('episodes')
 
-elif mode == 2:
-    creer_liste_videos(url, fanart)
+elif MODE == 2:
+    creer_liste_videos(URL, FANART)
     set_content('episodes')
 
-elif mode == 3:
-    creer_liste_episodes(url, season, fullName, fanart)
+elif MODE == 3:
+    creer_liste_episodes(URL, SEASON, FULLNAME, FANART)
     set_content('episodes')
 
-elif mode == 4:
-    jouer_video(url, url_info)
+elif MODE == 4:
+    jouer_video(URL)
 
-elif mode == 6:
-    creer_dossiers(url)
+elif MODE == 6:
+    creer_dossiers(URL)
     #set_content('tvshows')
     set_content('episodes')
 
-set_sorting_methods(mode)
+set_sorting_methods(MODE)
 xbmcplugin.endOfDirectory(int(sys.argv[1]))
