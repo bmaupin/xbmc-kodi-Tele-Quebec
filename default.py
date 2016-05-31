@@ -9,7 +9,7 @@
 # vim......: set expandtab
 # vim......: set tabstop=4
 #
-import os, time, urllib, urllib2, re, sys, traceback, xbmcplugin, xbmcaddon, xbmcgui, xbmc, simplejson
+import os, time, urllib, urllib2, re, socket, sys, traceback, xbmcplugin, xbmcaddon, xbmcgui, xbmc, simplejson
 if sys.version >= "2.5":
     from hashlib import md5 as _hash
 else:
@@ -24,7 +24,8 @@ ADDON_NAME = ADDON.getAddonInfo('name')
 ADDON_IMAGES_BASEPATH = ADDON.getAddonInfo('path')+'/resources/media/images/'
 ADDON_FANART = ADDON.getAddonInfo('path')+'/fanart.jpg'
 
-TELEQUEBEC_BASE_URL = 'http://zonevideo.telequebec.tv'
+TELEQUEBEC_VIDEO_SITE = 'zonevideo.telequebec.tv'
+TELEQUEBEC_BASE_URL = 'http://'+TELEQUEBEC_VIDEO_SITE
 
 if not os.path.exists(ADDON_CACHE_BASEDIR):
     os.makedirs(ADDON_CACHE_BASEDIR)
@@ -118,6 +119,7 @@ def rechercher_un_element(argument, rechercher_dans):
 
 def get_url_txt(the_url):
     """ function docstring """
+    checkForInternetConnection()
     req = urllib2.Request(the_url)
     req.add_header(\
         'User-Agent',\
@@ -335,6 +337,7 @@ def trouver_info_episode(the_url):
 
 def jouer_video(the_url):
     """ function docstring """
+    checkForInternetConnection()
     link = get_cached_content(the_url)
 
     # Obtenir media_uid pure de l'émission
@@ -554,6 +557,33 @@ def set_sorting_methods(mode):
         if ADDON.getSetting('SortMethodTvShow') == '1':
             xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_TITLE)
             xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_TITLE_IGNORE_THE)
+    return
+
+def is_network_available():
+    """ function docstring """
+    try:
+        # see if we can resolve the host name -- tells us if there is a DNS listening
+        host = socket.gethostbyname(TELEQUEBEC_VIDEO_SITE)
+        # connect to the host -- tells us if the host is actually reachable
+        s = socket.create_connection((host, 80), 2)
+        s.close()
+        return True
+    #except socket.error, exc:
+    except:
+        pass
+        return False
+
+def checkForInternetConnection():
+    """ function docstring """
+    #if addon.getSetting('NetworkDetection') == 'false':
+    #    return
+    if is_network_available()==False:
+        xbmcgui.Dialog().ok(\
+            ADDON_NAME,\
+            ADDON.getLocalizedString(32112),\
+            ADDON.getLocalizedString(32113)\
+        )
+        exit()
     return
 
 def debug_print(texte):

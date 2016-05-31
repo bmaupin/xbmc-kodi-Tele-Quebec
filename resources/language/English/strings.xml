@@ -48,5 +48,7 @@
     <!-- OTHERS -->
     <string id="32103">Miscellaneous</string>
     <string id="32104">Debug mode - Consult the kodi log file</string>
+    <string id="32112">OUTCH! ERROR!</string>
+    <string id="32113">The Tele-Quebec web site zonevideo.telequebec.tv or network is unavailable?!</string>
 
 </strings>

@@ -48,5 +48,7 @@
     <!-- OTHERS -->
     <string id="32103">Divers</string>
     <string id="32104">Mode débogue - Consultez le fichier des logs de Kodi</string>
+    <string id="32112">OUTCH! ERREUR!</string>
+    <string id="32113">Le site internet zonevideo.telequebec.tv de Télé-Québec ne peut être rejoint ou votre réseau est présentement non-disponible.</string>
 
 </strings>
