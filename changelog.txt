@@ -1,3 +1,9 @@
+[B]2.0.2 | SlySen | 2016-05-28[/B] 
+- Network availability and TQ Website connection verification
+- Now the addon Python code is Pylint compliant
+- Remove videos duplication in recents and populaires
+- Add/Fix video duration time
+
 [B]2.0.1 | SlySen | 2016-05-28[/B] 
 - User interface miscellaneous improvements
 

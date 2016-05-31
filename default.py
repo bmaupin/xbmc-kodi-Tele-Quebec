@@ -575,7 +575,7 @@ def check_for_ineternet_connection():
     """ function docstring """
     #if addon.getSetting('NetworkDetection') == 'false':
     #    return
-    if is_network_available()==False:
+    if is_network_available() == False:
         xbmcgui.Dialog().ok(\
             ADDON_NAME,\
             ADDON.getLocalizedString(32112),\

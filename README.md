@@ -1,5 +1,5 @@
 # xbmc-kodi-Tele-Quebec
-Plug-in Kodi pour visionner le contenu de Télé-Québec.tv
+Plug-in Kodi pour visionner le contenu de Télé-Québec.tv - DÉVELOPPEMENT
 
-Pour télécharger un .ZIP pour votre Kodi c'est ici: -> https://github.com/ssenechal67/plugin.video.telequebec
+POUR TÉLÉCHARGER UN .ZIP POUR VOTRE kODI C'EST ICI: -> https://github.com/ssenechal67/plugin.video.telequebec
 
