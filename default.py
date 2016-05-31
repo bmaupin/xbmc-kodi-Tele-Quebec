@@ -119,7 +119,7 @@ def rechercher_un_element(argument, rechercher_dans):
 
 def get_url_txt(the_url):
     """ function docstring """
-    checkForInternetConnection()
+    check_for_ineternet_connection()
     req = urllib2.Request(the_url)
     req.add_header(\
         'User-Agent',\
@@ -337,7 +337,7 @@ def trouver_info_episode(the_url):
 
 def jouer_video(the_url):
     """ function docstring """
-    checkForInternetConnection()
+    check_for_ineternet_connection()
     link = get_cached_content(the_url)
 
     # Obtenir media_uid pure de l'émission
@@ -565,15 +565,13 @@ def is_network_available():
         # see if we can resolve the host name -- tells us if there is a DNS listening
         host = socket.gethostbyname(TELEQUEBEC_VIDEO_SITE)
         # connect to the host -- tells us if the host is actually reachable
-        s = socket.create_connection((host, 80), 2)
-        s.close()
+        srvcon = socket.create_connection((host, 80), 2)
+        srvcon.close()
         return True
-    #except socket.error, exc:
-    except:
-        pass
+    except socket.error:
         return False
 
-def checkForInternetConnection():
+def check_for_ineternet_connection():
     """ function docstring """
     #if addon.getSetting('NetworkDetection') == 'false':
     #    return
