@@ -283,6 +283,8 @@ def creer_liste_episodes(the_url, saison, nom_complet, the_fanart):
                 nom_episode = rechercher_un_element('<a(?:.+?)>(.+?)</a>', sub2)
                 icon = rechercher_un_element('src="(.+?)"', item)
                 duree = get_duration_in_seconds(rechercher_un_element('"infoSaison"(.+?)</p>', item))
+                if duree == -1:
+                    duree = ''
 
                 # Pour eviter les duplication (surtout dans Populaires et Recents)
                 try:
@@ -326,7 +328,7 @@ def get_duration_in_seconds(duree_block):
         duree = int(d_entries[0][0])*60*60+int(d_entries[0][1])*60+int(d_entries[0][2])
 
     if duree < 60:
-        return 60
+        return -1
     else:
         return duree
 
