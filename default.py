@@ -23,6 +23,8 @@ ADDON_ICON = ADDON.getAddonInfo('icon')
 ADDON_NAME = ADDON.getAddonInfo('name')
 ADDON_IMAGES_BASEPATH = ADDON.getAddonInfo('path')+'/resources/media/images/'
 ADDON_FANART = ADDON.getAddonInfo('path')+'/fanart.jpg'
+RE_HTML_TAGS = re.compile(r'<[^>]+>')
+RE_AFTER_CR = re.compile(r'\n.*')
 
 TELEQUEBEC_VIDEO_SITE = 'zonevideo.telequebec.tv'
 TELEQUEBEC_BASE_URL = 'http://'+TELEQUEBEC_VIDEO_SITE
@@ -119,7 +121,7 @@ def rechercher_un_element(argument, rechercher_dans):
 
 def get_url_txt(the_url):
     """ function docstring """
-    check_for_ineternet_connection()
+    check_for_internet_connection()
     req = urllib2.Request(the_url)
     req.add_header(\
         'User-Agent',\
@@ -337,7 +339,7 @@ def trouver_info_episode(the_url):
 
 def jouer_video(the_url):
     """ function docstring """
-    check_for_ineternet_connection()
+    check_for_internet_connection()
     link = get_cached_content(the_url)
 
     # Obtenir media_uid pure de l'émission
@@ -438,8 +440,8 @@ def add_dir(name, url, mode, iconimage, categorie, nom_complet):
         infoLabels={\
             "Title": urllib.unquote(name),\
             "plot":\
-                ADDON.getAddonInfo('id')+' v.'+ADDON.getAddonInfo('version')+'[CR]'+\
-                '[B]'+urllib.unquote(name.replace('-- ', ''))+'[/B]'\
+                '[B]'+urllib.unquote(name.replace('-- ', ''))+'[/B]'+'[CR]'+\
+                ADDON.getAddonInfo('id')+' v.'+ADDON.getAddonInfo('version')\
         }\
     )
     if ADDON.getSetting('FanartEnabled') == 'true':
@@ -520,12 +522,12 @@ def add_link(name, the_url, iconimage, url_info, plot, duree, the_fanart):
     else:
         plot = name.lstrip()
 
-    liz = xbmcgui.ListItem(name, iconImage=ADDON_IMAGES_BASEPATH+"default-video.png", thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(remove_any_html_tags(name), iconImage=ADDON_IMAGES_BASEPATH+"default-video.png", thumbnailImage=iconimage)
     liz.setInfo(\
         type="Video",\
         infoLabels={\
-            "Title": name,\
-            "Plot":plot,\
+            "Title":remove_any_html_tags(name),\
+            "Plot":remove_any_html_tags(plot, False),\
             "Duration":duree\
         }\
     )
@@ -571,7 +573,7 @@ def is_network_available():
     except socket.error:
         return False
 
-def check_for_ineternet_connection():
+def check_for_internet_connection():
     """ function docstring """
     #if addon.getSetting('NetworkDetection') == 'false':
     #    return
@@ -583,6 +585,13 @@ def check_for_ineternet_connection():
         )
         exit()
     return
+
+def remove_any_html_tags(text, cr=True):
+    text = RE_HTML_TAGS.sub('', text)
+    text = text.lstrip()
+    if cr == True:
+        text = RE_AFTER_CR.sub('', text)
+    return text
 
 def debug_print(texte):
     """ function docstring """
