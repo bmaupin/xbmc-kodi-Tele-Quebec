@@ -6,6 +6,8 @@
     <string id="32110">Paramètres Avancés</string>
     <string id="32101">Activer le fanart de l'addiciel</string>
     <string id="32102">Si disponible, utiliser l'image de l'émission en fanart</string>
+    <string id="32114">Afficher le nom de l'émission dans le section descriptive</string>
+    <string id="32115">Vérifiez la connectivité au réseau et du site web</string>
 
     <!-- CACHE -->
     <string id="32105">Cache</string>

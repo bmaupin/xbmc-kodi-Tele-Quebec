@@ -172,7 +172,6 @@ def trouver_infos_emission(the_url):
     resume = rechercher_un_element('<p>(.+?)</p>', sub2)
     return [icon, resume]
 
-
 def creer_menu_categories():
     """ function docstring """
     url_az = TELEQUEBEC_BASE_URL+'/a-z/'
@@ -469,11 +468,17 @@ def add_emission(name, the_url, iconimage, plot, the_fanart):
         "&fullName="+urllib.quote_plus(str(FULLNAME))
     is_it_ok = True
     liz = xbmcgui.ListItem(name, iconImage=ADDON_IMAGES_BASEPATH+'default-folder.png', thumbnailImage=iconimage)
+
+    if ADDON.getSetting('EmissionNameInPlotEnabled') == 'true':
+        plot = '[B]'+urllib.unquote(name.lstrip())+'[/B]'+'[CR]'+plot.lstrip()
+    else:
+        plot = plot.lstrip()
+
     liz.setInfo(\
         type="Video",\
         infoLabels={\
             "Title":urllib.unquote(name),\
-            "Plot":'[B]'+urllib.unquote(name.lstrip())+'[/B]'+'[CR]'+plot.lstrip()\
+            "Plot":plot\
         }\
     )
     if ADDON.getSetting('FanartEnabled') == 'true':
@@ -496,11 +501,17 @@ def add_dir_saison(name, the_url, iconimage, saison, emission):
         "&fullName="+urllib.quote_plus(str(FULLNAME))
     is_it_ok = True
     liz = xbmcgui.ListItem(name, iconImage=ADDON_IMAGES_BASEPATH+'default-folder.png', thumbnailImage=iconimage)
+
+    if ADDON.getSetting('EmissionNameInPlotEnabled') == 'true':
+        plot = '[B]'+emission+'[/B][CR]'+name
+    else:
+        plot = name
+
     liz.setInfo(\
         type="Video",\
         infoLabels={\
             "Title": urllib.unquote(name),\
-            "Plot":'[B]'+emission+'[/B][CR]'+name\
+            "Plot":plot\
         }\
     )
     if ADDON.getSetting('FanartEnabled') == 'true':
@@ -520,7 +531,10 @@ def add_link(name, the_url, iconimage, url_info, plot, duree, the_fanart):
         "&Info="+urllib.quote_plus(url_info)
 
     if plot != '':
-        plot = '[B]'+plot.lstrip()+'[/B]'+'[CR]'+name.lstrip()
+        if ADDON.getSetting('EmissionNameInPlotEnabled') == 'true':
+            plot = '[B]'+plot.lstrip()+'[/B]'+'[CR]'+name.lstrip()
+        else:
+            plot = name.lstrip()
     else:
         plot = name.lstrip()
 
@@ -577,8 +591,9 @@ def is_network_available():
 
 def check_for_internet_connection():
     """ function docstring """
-    #if addon.getSetting('NetworkDetection') == 'false':
-    #    return
+    if ADDON.getSetting('NetworkDetection') == 'false':
+        return
+
     if is_network_available() == False:
         xbmcgui.Dialog().ok(\
             ADDON_NAME,\
@@ -588,10 +603,11 @@ def check_for_internet_connection():
         exit()
     return
 
-def remove_any_html_tags(text, cr=True):
+def remove_any_html_tags(text, crlf=True):
+    """ function docstring """
     text = RE_HTML_TAGS.sub('', text)
     text = text.lstrip()
-    if cr == True:
+    if crlf == True:
         text = RE_AFTER_CR.sub('', text)
     return text
 

@@ -1,3 +1,9 @@
+[B]2.0.3 | SlySen | XXXX-XX-XXX[/B] 
+- Remove any trailing HTML tags on GUI
+- No video duration if lest than 59 seconds
+- Setting to turn on/off tv-show name in descriptions
+- Setting to bypass network and web site connectivity verification
+
 [B]2.0.2 | SlySen | 2016-05-31[/B] 
 - Network availability and TQ Website connection verification
 - Now the addon Python code is Pylint compliant

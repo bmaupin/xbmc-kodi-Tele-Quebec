@@ -6,6 +6,8 @@
     <string id="32100">Apparence</string>
     <string id="32101">Enable the addon fanart</string>
     <string id="32102">If available, use the tv-show image as fanart</string>
+    <string id="32114">Show tv-show name in the description section</string>
+    <string id="32115">Verify network and web site connectivity</string>
 
     <!-- CACHE -->
     <string id="32105">Cache</string>
