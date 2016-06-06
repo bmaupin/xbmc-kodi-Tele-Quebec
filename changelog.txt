@@ -1,3 +1,6 @@
+[B]2.0.4 | SlySen | YYYY-MM-DD[/B] 
+- n/a
+
 [B]2.0.3 | SlySen | 2016-06-06[/B] 
 - Setting. Maximum possible caching TTL set to 72 hours
 - Remove any trailing HTML tags on GUI
