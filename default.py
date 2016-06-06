@@ -18,7 +18,7 @@ else:
 
 ADDON = xbmcaddon.Addon()
 ADDON_CACHE_BASEDIR = os.path.join(xbmc.translatePath(ADDON.getAddonInfo('path')), ".cache")
-ADDON_CACHE_TTL = float(ADDON.getSetting('CacheTTL').replace("0", ".5").replace("25", "0"))
+ADDON_CACHE_TTL = float(ADDON.getSetting('CacheTTL').replace("0", ".5").replace("73", "0"))
 ADDON_ICON = ADDON.getAddonInfo('icon')
 ADDON_NAME = ADDON.getAddonInfo('name')
 ADDON_IMAGES_BASEPATH = ADDON.getAddonInfo('path')+'/resources/media/images/'

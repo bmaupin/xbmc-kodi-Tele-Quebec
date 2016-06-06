@@ -1,4 +1,5 @@
-[B]2.0.3 | SlySen | XXXX-XX-XXX[/B] 
+[B]2.0.3 | SlySen | 2016-06-06[/B] 
+- Setting. Maximum possible caching TTL set to 72 hours
 - Remove any trailing HTML tags on GUI
 - No video duration if lest than 59 seconds
 - Setting to turn on/off tv-show name in descriptions
