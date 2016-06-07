@@ -1,5 +1,6 @@
 [B]2.0.4 | SlySen | YYYY-MM-DD[/B] 
-- n/a
+- Setting. Auto-delete Kodi .fi temp files
+- Popup a warning dialog instead of an empty directory if no video
 
 [B]2.0.3 | SlySen | 2016-06-06[/B] 
 - Setting. Maximum possible caching TTL set to 72 hours

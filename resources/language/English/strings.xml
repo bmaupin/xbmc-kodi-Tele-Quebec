@@ -35,6 +35,7 @@
     <string id="32265">65 Hours</string> <string id="32266">66 Hours</string> <string id="32267">67 Hours</string> <string id="32268">68 Hours</string>
     <string id="32269">69 Hours</string> <string id="32270">70 Hours</string> <string id="32271">71 Hours</string> <string id="32272">72 Hours</string>
     <string id="32273">None</string>
+    <string id="32122">Auto-delete Kodi .fi temporary files</string>
 
     <!-- SORTING -->
     <string id="32111">Sorting method</string>
@@ -46,5 +47,7 @@
     <string id="32104">Debug mode - Consult the kodi log file</string>
     <string id="32112">OUTCH! ERROR!</string>
     <string id="32113">The Tele-Quebec web site zonevideo.telequebec.tv or network is unavailable?!</string>
+    <string id="32120">EMPTY DIRECTORY</string>
+    <string id="32121">The selected directory do not contains any video</string>
 
 </strings>

@@ -35,6 +35,7 @@
     <string id="32265">65 Heures</string> <string id="32266">66 Heures</string> <string id="32267">67 Heures</string> <string id="32268">68 Heures</string>
     <string id="32269">69 Heures</string> <string id="32270">70 Heures</string> <string id="32271">71 Heures</string> <string id="32272">72 Heures</string>
     <string id="32273">Jamais</string>
+    <string id="32122">Auto-supprimer les fichiers temporaires .fi de Kodi</string>
 
     <!-- SORTING -->
     <string id="32111">Méthode de triage des listes</string>
@@ -46,5 +47,7 @@
     <string id="32104">Mode débogue - Consultez le fichier des logs de Kodi</string>
     <string id="32112">OUTCH! ERREUR!</string>
     <string id="32113">Le site internet zonevideo.telequebec.tv de Télé-Québec ne peut être rejoint ou votre réseau est présentement non-disponible.</string>
+    <string id="32120">RÉPERTOIRE VIDE</string>
+    <string id="32121">Le répertoire sélectionné ne contient aucune vidéo</string>
 
 </strings>

@@ -273,11 +273,14 @@ def creer_liste_episodes(the_url, saison, nom_complet, the_fanart):
 
         liste = re.split('<div class="item', container_saison_str)
         media_url_list = []
+        got_video = False
         for item in liste:
             sub2 = re.compile('<div class="info">(.+?)</div>', re.DOTALL).findall(item)
             if len(sub2) > 0:
                 sub2 = sub2[0]
                 url_episode = rechercher_un_element('href="(.+?)">', sub2)
+                if url_episode is not None and len(url_episode) > 5:
+                    got_video = True
                 nom_emission = rechercher_un_element('<p(?:.+?)>(.+?)</p>', sub2)
                 nom_episode = rechercher_un_element('<a(?:.+?)>(.+?)</a>', sub2)
                 icon = rechercher_un_element('src="(.+?)"', item)
@@ -310,6 +313,14 @@ def creer_liste_episodes(the_url, saison, nom_complet, the_fanart):
                             duree,\
                             the_fanart\
                         )
+
+        if got_video == False:
+            xbmcgui.Dialog().ok(\
+                ADDON_NAME,\
+                ADDON.getLocalizedString(32120),\
+                ADDON.getLocalizedString(32121)\
+            )
+            exit()
 
 def get_duration_in_seconds(duree_block):
     """ function docstring """
@@ -407,9 +418,9 @@ def get_params():
             params = params[0:len(params)-2]
         pairsofparams = cleanedparams.split('&')
         param = {}
-        for i in range(len(pairsofparams)):
+        for k in range(len(pairsofparams)):
             splitparams = {}
-            splitparams = pairsofparams[i].split('=')
+            splitparams = pairsofparams[k].split('=')
             if (len(splitparams)) == 2:
                 param[splitparams[0]] = splitparams[1]
 
@@ -538,7 +549,9 @@ def add_link(name, the_url, iconimage, url_info, plot, duree, the_fanart):
     else:
         plot = name.lstrip()
 
-    liz = xbmcgui.ListItem(remove_any_html_tags(name), iconImage=ADDON_IMAGES_BASEPATH+"default-video.png", thumbnailImage=iconimage)
+    liz = xbmcgui.ListItem(\
+        remove_any_html_tags(name), iconImage=ADDON_IMAGES_BASEPATH+"default-video.png", thumbnailImage=iconimage\
+    )
     liz.setInfo(\
         type="Video",\
         infoLabels={\
@@ -714,3 +727,11 @@ elif MODE == 6:
 
 set_sorting_methods(MODE)
 xbmcplugin.endOfDirectory(int(sys.argv[1]))
+
+if MODE is not 4 and ADDON.getSetting('DeleteTempFiFilesEnabled') == 'true':
+    PATH = xbmc.translatePath('special://temp')
+    FILENAMES = next(os.walk(PATH))[2]
+    for i in FILENAMES:
+        if ".fi" in i:
+            os.remove(os.path.join(PATH, i))
+
