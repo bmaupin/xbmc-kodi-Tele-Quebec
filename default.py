@@ -192,7 +192,7 @@ def creer_menu_categories():
     add_dir('Vari%C3%A9t%C3%A9s', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '10', 0, True)
     add_dir('-- Populaires', TELEQUEBEC_BASE_URL+'/populaires/', 2, ADDON_IMAGES_BASEPATH+'default-folder.png', '0', 1, True)
     add_dir('-- R%C3%A9cents', TELEQUEBEC_BASE_URL, 2, ADDON_IMAGES_BASEPATH+'default-folder.png', '0', 1, True)
-    add_dir('Param%C3%A8tres de l\'additiciel', TELEQUEBEC_BASE_URL, 99, ADDON_IMAGES_BASEPATH+'default-folder.png', '0', 0, False)
+    add_dir('[COLOR red][I]Param%C3%A8tres de l\'additiciel[/I][/COLOR]', TELEQUEBEC_BASE_URL, 99, ADDON_IMAGES_BASEPATH+'default-folder.png', '0', 0, False)
 
 def creer_liste_filtree(categorie_voulue, the_url):
     """ function docstring """
