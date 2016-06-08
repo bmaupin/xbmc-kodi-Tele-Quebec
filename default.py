@@ -178,20 +178,21 @@ def creer_menu_categories():
     nom_categories = get_categories(url_az)
     for number_cat, nom_cat in nom_categories:
         if number_cat is not 'All':
-            add_dir(nom_cat, url_az, 1, '', number_cat, 0)
-    add_dir('A %C3%A0 Z - Tous les genres', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '0', 0)
-    add_dir('Documentaires', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '1', 0)
-    add_dir('Dossiers', TELEQUEBEC_BASE_URL+'/dossiers/', 6, ADDON_IMAGES_BASEPATH+'default-folder.png', '0', 1)
-    add_dir('Famille', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '2', 0)
-    add_dir('Films', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '3', 0)
-    add_dir('Jeunesse - Pour les petits', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '6', 0)
-    add_dir('Jeunesse - Pour les plus grands', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '4', 0)
-    add_dir('Jeunesse - Pour les vraiment grands', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '5', 0)
-    add_dir('Magazines', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '7', 0)
-    add_dir('S%C3%A9ries de fiction', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '9', 0)
-    add_dir('Vari%C3%A9t%C3%A9s', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '10', 0)
-    add_dir('-- Populaires', TELEQUEBEC_BASE_URL+'/populaires/', 2, ADDON_IMAGES_BASEPATH+'default-folder.png', '0', 1)
-    add_dir('-- R%C3%A9cents', TELEQUEBEC_BASE_URL, 2, ADDON_IMAGES_BASEPATH+'default-folder.png', '0', 1)
+            add_dir(nom_cat, url_az, 1, '', number_cat, 0, True)
+    add_dir('A %C3%A0 Z - Tous les genres', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '0', 0, True)
+    add_dir('Documentaires', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '1', 0, True)
+    add_dir('Dossiers', TELEQUEBEC_BASE_URL+'/dossiers/', 6, ADDON_IMAGES_BASEPATH+'default-folder.png', '0', 1, True)
+    add_dir('Famille', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '2', 0, True)
+    add_dir('Films', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '3', 0, True)
+    add_dir('Jeunesse - Pour les petits', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '6', 0, True)
+    add_dir('Jeunesse - Pour les plus grands', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '4', 0, True)
+    add_dir('Jeunesse - Pour les vraiment grands', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '5', 0, True)
+    add_dir('Magazines', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '7', 0, True)
+    add_dir('S%C3%A9ries de fiction', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '9', 0, True)
+    add_dir('Vari%C3%A9t%C3%A9s', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '10', 0, True)
+    add_dir('-- Populaires', TELEQUEBEC_BASE_URL+'/populaires/', 2, ADDON_IMAGES_BASEPATH+'default-folder.png', '0', 1, True)
+    add_dir('-- R%C3%A9cents', TELEQUEBEC_BASE_URL, 2, ADDON_IMAGES_BASEPATH+'default-folder.png', '0', 1, True)
+    add_dir('Param%C3%A8tres de l\'additiciel', TELEQUEBEC_BASE_URL, 99, ADDON_IMAGES_BASEPATH+'default-folder.png', '0', 0, False)
 
 def creer_liste_filtree(categorie_voulue, the_url):
     """ function docstring """
@@ -240,7 +241,7 @@ def creer_liste_saisons(link, the_fanart):
         log(nom_emission)
         if icon == "":
             icon = ADDON_IMAGES_BASEPATH+'default-folder.png'
-        add_dir_saison(nom_saison, URL, icon, nb_saisons, nom_emission)
+        add_dir_saison(nom_saison, URL, icon, nb_saisons, nom_emission, True)
         xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_NONE)
     if nb_saisons == 0:
         creer_liste_episodes(URL, 1, FULLNAME, the_fanart)
@@ -257,7 +258,7 @@ def creer_liste_supplement(link, nb_saisons):
         nom_emission = rechercher_un_element('<h1>(.+?)</h1>', sub)
         if icon == "":
             icon = ADDON_IMAGES_BASEPATH+'default-folder.png'
-        add_dir_saison(titre, URL, icon, nb_saisons, nom_emission)
+        add_dir_saison(titre, URL, icon, nb_saisons, nom_emission, True)
     return nb_saisons
 
 def creer_liste_episodes(the_url, saison, nom_complet, the_fanart):
@@ -434,7 +435,7 @@ def get_nom_emission_2():
         nom_emission_2 = ''
     return nom_emission_2
 
-def add_dir(name, url, mode, iconimage, categorie, nom_complet):
+def add_dir(name, url, mode, iconimage, categorie, nom_complet, is_folder):
     """ function docstring """
     entry_url = sys.argv[0]+"?url="+urllib.quote_plus(url)+\
         "&mode="+str(mode)+\
@@ -447,15 +448,18 @@ def add_dir(name, url, mode, iconimage, categorie, nom_complet):
         iconImage=ADDON_IMAGES_BASEPATH+'default-folder.png',\
         thumbnailImage=iconimage\
     )
-    liz.setInfo(\
-        type="Video",\
-        infoLabels={\
-            "Title": urllib.unquote(name),\
-            "plot":\
-                '[B]'+urllib.unquote(name.replace('-- ', ''))+'[/B]'+'[CR]'+\
-                ADDON.getAddonInfo('id')+' v.'+ADDON.getAddonInfo('version')\
-        }\
-    )
+
+    if is_folder is True:
+        liz.setInfo(\
+            type="Video",\
+            infoLabels={\
+                "Title": urllib.unquote(name),\
+                "plot":\
+                    '[B]'+urllib.unquote(name.replace('-- ', ''))+'[/B]'+'[CR]'+\
+                    ADDON.getAddonInfo('id')+' v.'+ADDON.getAddonInfo('version')\
+            }\
+        )
+
     if ADDON.getSetting('FanartEnabled') == 'true':
         if ADDON.getSetting('FanartEmissionsEnabled') == 'true':
             if iconimage == ADDON_IMAGES_BASEPATH+'default-folder.png': # Main dicrectory listing
@@ -464,7 +468,7 @@ def add_dir(name, url, mode, iconimage, categorie, nom_complet):
                 liz.setProperty('fanart_image', iconimage)
         else:
             liz.setProperty('fanart_image', ADDON_FANART)
-    is_it_ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=entry_url, listitem=liz, isFolder=True)
+    is_it_ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=entry_url, listitem=liz, isFolder=is_folder)
     return is_it_ok
 
 def add_emission(name, the_url, iconimage, plot, the_fanart):
@@ -725,8 +729,13 @@ elif MODE == 6:
     #set_content('tvshows')
     set_content('episodes')
 
-set_sorting_methods(MODE)
-xbmcplugin.endOfDirectory(int(sys.argv[1]))
+elif MODE == 99:
+    ADDON.openSettings()
+
+# Let's get out of here!
+if MODE is not 99:
+    set_sorting_methods(MODE)
+    xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
 if MODE is not 4 and ADDON.getSetting('DeleteTempFiFilesEnabled') == 'true':
     PATH = xbmc.translatePath('special://temp')
