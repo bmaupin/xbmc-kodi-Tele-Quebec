@@ -192,7 +192,7 @@ def creer_menu_categories():
     add_dir('Vari%C3%A9t%C3%A9s', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '10', 0, True)
     add_dir('-- Populaires', TELEQUEBEC_BASE_URL+'/populaires/', 2, ADDON_IMAGES_BASEPATH+'default-folder.png', '0', 1, True)
     add_dir('-- R%C3%A9cents', TELEQUEBEC_BASE_URL, 2, ADDON_IMAGES_BASEPATH+'default-folder.png', '0', 1, True)
-    add_dir('[COLOR FF00A757][I]Param%C3%A8tres de l\'additiciel ...[/I][/COLOR]', TELEQUEBEC_BASE_URL, 99, ADDON_IMAGES_BASEPATH+'default-folder.png', '0', 0, False)
+    add_dir('[COLOR FF00A757][I]Param%C3%A8tres de l\'additiciel...[/I][/COLOR]', TELEQUEBEC_BASE_URL, 99, ADDON_IMAGES_BASEPATH+'default-folder.png', '0', 0, False)
 
 def creer_liste_filtree(categorie_voulue, the_url):
     """ function docstring """
@@ -504,7 +504,7 @@ def add_emission(name, the_url, iconimage, plot, the_fanart):
     is_it_ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=entry_url, listitem=liz, isFolder=True)
     return is_it_ok
 
-def add_dir_saison(name, the_url, iconimage, saison, emission):
+def add_dir_saison(name, the_url, iconimage, saison, emission, is_folder):
     """ function docstring """
     prochain_mode = 3
     entry_url = sys.argv[0]+"?url="+urllib.quote_plus(the_url)+\
@@ -534,7 +534,7 @@ def add_dir_saison(name, the_url, iconimage, saison, emission):
             liz.setProperty('fanart_image', iconimage)
         else:
             liz.setProperty('fanart_image', ADDON_FANART)
-    is_it_ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=entry_url, listitem=liz, isFolder=True)
+    is_it_ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=entry_url, listitem=liz, isFolder=is_folder)
     return is_it_ok
 
 def add_link(name, the_url, iconimage, url_info, plot, duree, the_fanart):
