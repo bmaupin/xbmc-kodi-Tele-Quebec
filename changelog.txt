@@ -1,4 +1,7 @@
-[B]2.0.4 | SlySen | YYYY-MM-DD[/B] 
+[B]2.0.5 | SlySen | YYYY-MM-DD[/B] 
+- DEV VERSION
+
+[B]2.0.4 | SlySen | 2016-06-12[/B] 
 - Setting. Auto-delete Kodi .fi temp files
 - Enable access to the addon settings from the main page
 - Popup a warning dialog instead of an empty directory if no video
