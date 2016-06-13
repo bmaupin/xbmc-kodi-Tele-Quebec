@@ -15,7 +15,6 @@
         <setting label="32107" type="action" action="RunScript($CWD/resources/lib/clearcache.py,full)" default="" />
         <setting type="lsep" /> -->
         <setting label="32115" type="bool" id="NetworkDetection" default="true"/>
-        <setting type="lsep" />
         <setting label="32104" type="bool" id="DebugMode" default="false"/>
     </category> 
 
