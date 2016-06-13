@@ -179,7 +179,7 @@ def creer_menu_categories():
     for number_cat, nom_cat in nom_categories:
         if number_cat is not 'All':
             add_dir(nom_cat, url_az, 1, '', number_cat, 0, True)
-    add_dir('A %C3%A0 Z - Tous les genres', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '0', 0, True)
+    add_dir('A %C3%A0 Z - Toutes les cat%C3%A9gories', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '0', 0, True)
     add_dir('Documentaires', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '1', 0, True)
     add_dir('Dossiers', TELEQUEBEC_BASE_URL+'/dossiers/', 6, ADDON_IMAGES_BASEPATH+'default-folder.png', '0', 1, True)
     add_dir('Famille', url_az, 1, ADDON_IMAGES_BASEPATH+'default-folder.png', '2', 0, True)
