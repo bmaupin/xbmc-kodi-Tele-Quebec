@@ -3,7 +3,7 @@
     <!-- APPARENCE -->
     <category label="32100">
         <setting label="32101" type="bool" id="FanartEnabled" default="true"/>
-        <setting label="32102" type="bool" id="FanartEmissionsEnabled" default="true"/>
+        <setting label="32102" type="bool" id="FanartEmissionsEnabled" default="true" enable="eq(-1,true)"/>
         <setting label="32114" type="bool" id="EmissionNameInPlotEnabled" default="true"/>
         <setting label="32111" type="enum" id="SortMethodTvShow" lvalues="32300|32301" default="0" />
     </category> 
