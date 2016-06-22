@@ -564,6 +564,7 @@ def add_link(name, the_url, iconimage, url_info, plot, duree, the_fanart):
             "Duration":duree\
         }\
     )
+    liz.addContextMenuItems([('Informations', 'Action(Info)')])
 
     if the_fanart == ADDON_FANART:
         the_fanart = iconimage
